@@ -1,0 +1,20 @@
+# Основные зависимости
+-r requirements.txt
+
+# Тестирование
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+pytest-cov>=4.0.0
+
+# Моки и фикстуры
+factory-boy>=3.2.0
+faker>=18.0.0
+
+# Покрытие кода
+coverage>=7.0.0
+
+# Линтеры
+flake8>=6.0.0
+black>=23.0.0
+isort>=5.12.0
