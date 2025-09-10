@@ -1,0 +1,5 @@
+---
+description: ты не можешь использовать консоль
+globs:
+alwaysApply: true
+---

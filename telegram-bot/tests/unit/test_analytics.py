@@ -64,9 +64,11 @@ class TestMatrixCalculation:
         # Проверяем, что матрица - это объект Matrix
         assert hasattr(matrix, '__dict__'), "Матрица должна быть объектом"
         
-        # Проверяем, что матрица содержит атрибуты для чисел 1-9
-        for i in range(1, 10):
-            assert hasattr(matrix, str(i)), f"Матрица должна содержать атрибут {i}"
+        # Проверяем, что матрица содержит необходимые атрибуты
+        assert hasattr(matrix, 'digit_counts'), "Матрица должна содержать digit_counts"
+        assert hasattr(matrix, 'matrix'), "Матрица должна содержать matrix"
+        assert hasattr(matrix, 'get_digit_strength'), "Матрица должна содержать get_digit_strength"
+        assert hasattr(matrix, 'get_missing_digits'), "Матрица должна содержать get_missing_digits"
 
 
 class TestNameNumberCalculation:
@@ -81,9 +83,9 @@ class TestNameNumberCalculation:
     def test_name_number_different_names(self):
         """Тест расчета для разных имен."""
         test_cases = [
-            ("Anna", 3),
-            ("David", 3),
-            ("Maria", 4),
+            ("Anna", 3),  # A=1, N=5, N=5, A=1 → 1+5+5+1=12 → 1+2=3
+            ("David", 7), # D=4, A=1, V=6, I=1, D=4 → 4+1+6+1+4=16 → 1+6=7
+            ("Maria", 9), # M=4, A=1, R=2, I=1, A=1 → 4+1+2+1+1=9 → 9
         ]
         
         for name, expected in test_cases:

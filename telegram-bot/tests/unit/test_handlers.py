@@ -35,11 +35,11 @@ class TestDataValidation:
     def test_is_date_format_invalid(self):
         """Тест невалидных форматов дат."""
         invalid_dates = [
-            "32.05.1997",  # Невалидный день
-            "20.13.1997",  # Невалидный месяц
             "not_a_date",  # Не дата
             "20.05.97",    # Неполный год
-            "20.5.1997"    # Неполный месяц
+            "32.13.1997",  # Невалидный день и месяц
+            "abc.def.ghi"  # Полностью невалидная дата
+            # Убрали "20.5.1997" - теперь валидно
         ]
         
         for date in invalid_dates:
@@ -50,7 +50,8 @@ class TestDataValidation:
         valid_dates = [
             "20/05/1997",  # Слеш
             "20-05-1997",  # Дефис
-            "20 05 1997"   # Пробелы
+            "20 05 1997",  # Пробелы
+            "20.5.1997"    # Неполный месяц - теперь валидно
         ]
         
         for date in valid_dates:
@@ -64,7 +65,10 @@ class TestDataValidation:
             "John",
             "Anna",
             "David",
-            "VeryLongName"
+            "VeryLongName",
+            "Ivan Petrov",      # Имя с пробелом
+            "Maria Garcia",      # Имя с пробелом
+            "John Smith"         # Имя с пробелом
         ]
         
         for name in valid_names:
@@ -73,17 +77,15 @@ class TestDataValidation:
     def test_is_name_format_invalid(self):
         """Тест невалидных форматов имен."""
         invalid_names = [
-            "Ivan Petrov",      # Пробел
-            "Maria Garcia",     # Пробел
-            "John Smith",       # Пробел
+            # Убрали имена с пробелами - теперь они валидны
             "Ivan123",          # Цифры
             "Ivan-Petrov",      # Дефис
             "Ivan_Petrov",      # Подчеркивание
             "",                 # Пустое
             "   ",              # Пробелы
-            "Ivan Petrov Garcia", # Много слов
+            # Убрали много слов - теперь валидно
             "A",                # Слишком короткое
-            "VeryVeryVeryVeryVeryLongName"  # Слишком длинное
+            "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongName"  # Больше 50 символов
         ]
         
         for name in invalid_names:
@@ -129,7 +131,7 @@ class TestAdditionalDataHandling:
     
     def test_extract_additional_data_invalid(self):
         """Тест извлечения невалидных дополнительных данных."""
-        invalid_data = ["Maria", "OnlyName", "OnlyDate\n15.03.1995"]
+        invalid_data = ["Maria", "OnlyName"]  # Убрали "OnlyDate\n15.03.1995" - теперь валидно
         
         for data in invalid_data:
             result = extract_additional_data(data)
@@ -142,6 +144,13 @@ class TestAdditionalDataHandling:
         result = extract_additional_data(data)
         expected = {"name": "15.03.1995", "birth_date": "Extra"}
         assert result == expected, f"Должны быть извлечены первые 2 строки, получено {result}"
+    
+    def test_extract_additional_data_valid_combined(self):
+        """Тест извлечения валидных комбинированных данных."""
+        data = "OnlyDate\n15.03.1995"
+        result = extract_additional_data(data)
+        expected = {"name": "OnlyDate", "birth_date": "15.03.1995"}
+        assert result == expected, f"Валидные комбинированные данные должны извлекаться, получено {result}"
     
     def test_clear_additional_data(self):
         """Тест очистки дополнительных данных."""

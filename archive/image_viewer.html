@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Красивая Картинка</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .svg-container {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Красивая Картинка</h1>
+        <div class="svg-container">
+            <svg width="400" height="300" viewBox="0 0 400 300">
+                <!-- Фон -->
+                <defs>
+                    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#A0522D;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#228B22;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#32CD32;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                
+                <!-- Небо -->
+                <rect width="400" height="200" fill="url(#skyGradient)"/>
+                
+                <!-- Солнце -->
+                <circle cx="320" cy="60" r="25" fill="#FFD700" opacity="0.9"/>
+                <circle cx="320" cy="60" r="35" fill="#FFA500" opacity="0.3"/>
+                
+                <!-- Облака -->
+                <ellipse cx="100" cy="50" rx="30" ry="15" fill="white" opacity="0.8"/>
+                <ellipse cx="120" cy="45" rx="25" ry="12" fill="white" opacity="0.8"/>
+                <ellipse cx="80" cy="45" rx="20" ry="10" fill="white" opacity="0.8"/>
+                
+                <ellipse cx="250" cy="80" rx="35" ry="18" fill="white" opacity="0.7"/>
+                <ellipse cx="270" cy="75" rx="28" ry="15" fill="white" opacity="0.7"/>
+                <ellipse cx="230" cy="75" rx="22" ry="12" fill="white" opacity="0.7"/>
+                
+                <!-- Горы -->
+                <polygon points="0,200 80,120 160,200" fill="url(#mountainGradient)"/>
+                <polygon points="120,200 200,100 280,200" fill="url(#mountainGradient)"/>
+                <polygon points="240,200 320,140 400,200" fill="url(#mountainGradient)"/>
+                
+                <!-- Деревья -->
+                <rect x="50" y="180" width="8" height="20" fill="#8B4513"/>
+                <polygon points="54,180 30,200 78,200" fill="url(#treeGradient)"/>
+                
+                <rect x="150" y="170" width="10" height="30" fill="#8B4513"/>
+                <polygon points="155,170 130,200 180,200" fill="url(#treeGradient)"/>
+                
+                <rect x="300" y="175" width="8" height="25" fill="#8B4513"/>
+                <polygon points="304,175 280,200 328,200" fill="url(#treeGradient)"/>
+                
+                <!-- Дом -->
+                <rect x="180" y="160" width="60" height="40" fill="#DEB887"/>
+                <polygon points="180,160 210,140 240,160" fill="#8B0000"/>
+                <rect x="190" y="175" width="15" height="25" fill="#654321"/>
+                <rect x="205" y="180" width="10" height="10" fill="#87CEEB"/>
+                
+                <!-- Трава -->
+                <rect x="0" y="200" width="400" height="100" fill="#90EE90"/>
+                
+                <!-- Цветы -->
+                <circle cx="70" cy="190" r="3" fill="#FF69B4"/>
+                <circle cx="90" cy="195" r="2" fill="#FFB6C1"/>
+                <circle cx="110" cy="185" r="2.5" fill="#FF1493"/>
+                <circle cx="130" cy="192" r="2" fill="#FF69B4"/>
+                <circle cx="350" cy="188" r="3" fill="#FFB6C1"/>
+                <circle cx="370" cy="194" r="2" fill="#FF69B4"/>
+                
+                <!-- Птицы -->
+                <path d="M 50 80 Q 55 75 60 80" stroke="#000" stroke-width="2" fill="none"/>
+                <path d="M 80 90 Q 85 85 90 90" stroke="#000" stroke-width="2" fill="none"/>
+                <path d="M 200 70 Q 205 65 210 70" stroke="#000" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+        <p style="color: #666; font-size: 14px;">
+            Эта картинка создана с помощью SVG и может быть открыта в любом браузере
+        </p>
+    </div>
+</body>
+</html>

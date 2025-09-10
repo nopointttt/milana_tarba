@@ -1,0 +1,908 @@
+2025-09-06 21:17:06,231 INFO sqlalchemy.engine.Engine COMMIT
+2025-09-06 21:17:06,231 [INFO] sqlalchemy.engine.Engine: COMMIT
+2025-09-06 21:17:07,809 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads "HTTP/1.1 200 OK"
+2025-09-06 21:17:08,438 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/messages "HTTP/1.1 200 OK"
+2025-09-06 21:17:09,935 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs "HTTP/1.1 200 OK"
+2025-09-06 21:17:11,411 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:13,345 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:15,526 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:17,530 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:19,129 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:20,927 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:24,473 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:26,459 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:28,094 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:29,689 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:31,360 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:32,874 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:34,626 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:36,123 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:37,714 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:39,371 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/runs/run_ewDe2cKg5ARHPeUW2UBNkPoS "HTTP/1.1 200 OK"
+2025-09-06 21:17:39,824 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_YQe66DMem0od3y4iMpKfs4gs/messages "HTTP/1.1 200 OK"
+2025-09-06 21:17:41,979 [INFO] aiogram.event: Update id=410587774 is not handled. Duration 37011 ms by bot id=8469358239
+2025-09-06 21:17:41,980 [ERROR] aiogram.event: Cause exception while process update id=410587774 by bot id=8469358239
+TelegramBadRequest: Telegram server says - Bad Request: query is too old and response timeout expired or query ID is invalid
+Traceback (most recent call last):
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        observer=observer, update_type=update_type, event=telegram_event, **data
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\noadmin\Desktop\Milana Tarba\src\handlers\start.py", line 438, in analyze_date_callback
+    await callback_query.answer()
+  File "C:\Python313\Lib\site-packages\aiogram\methods\base.py", line 84, in emit
+    return await bot(self)
+           ^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\client\bot.py", line 485, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\client\session\base.py", line 254, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\site-packages\aiogram\client\session\aiohttp.py", line 185, in make_request
+    response = self.check_response(
+        bot=bot, method=method, status_code=resp.status, content=raw_result
+    )
+  File "C:\Python313\Lib\site-packages\aiogram\client\session\base.py", line 120, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: query is too old and response timeout expired or query ID is invalid
+
+🛑 Получен сигнал 2. Останавливаю бота...
+⏹️ Останавливаю polling...
+2025-09-06 21:18:17,188 [INFO] aiogram.dispatcher: Polling stopped
+2025-09-06 21:18:17,191 [ERROR] aiogram.dispatcher: Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected       
+2025-09-06 21:18:17,191 [WARNING] aiogram.dispatcher: Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8469358239)
+✅ Бот остановлен корректно
+2025-09-06 21:18:17,449 [INFO] aiogram.dispatcher: Polling stopped for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py
+🚀 Запускаю бота...
+💡 Для остановки нажмите Ctrl+C
+2025-09-06 21:22:55,394 [INFO] aiogram.dispatcher: Start polling
+2025-09-06 21:22:56,318 [INFO] aiogram.dispatcher: Run polling for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+2025-09-06 21:23:09,597 [INFO] aiogram.event: Update id=410587775 is handled. Duration 348 ms by bot id=8469358239
+2025-09-06 21:23:18,178 [INFO] aiogram.event: Update id=410587776 is handled. Duration 529 ms by bot id=8469358239
+2025-09-06 21:23:20,777 [INFO] aiogram.event: Update id=410587777 is handled. Duration 339 ms by bot id=8469358239
+2025-09-06 21:23:33,245 [INFO] aiogram.event: Update id=410587778 is handled. Duration 147 ms by bot id=8469358239
+2025-09-06 21:23:35,731 [INFO] aiogram.event: Update id=410587779 is handled. Duration 320 ms by bot id=8469358239
+2025-09-06 21:23:39,801 [INFO] aiogram.event: Update id=410587780 is handled. Duration 190 ms by bot id=8469358239
+2025-09-06 21:23:43,200 [INFO] aiogram.event: Update id=410587781 is handled. Duration 151 ms by bot id=8469358239
+2025-09-06 21:23:45,147 [INFO] aiogram.event: Update id=410587782 is handled. Duration 176 ms by bot id=8469358239
+2025-09-06 21:23:50,147 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2025-09-06 21:23:50,147 [INFO] sqlalchemy.engine.Engine: select pg_catalog.version()
+2025-09-06 21:23:50,147 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:23:50,147 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:23:50,480 INFO sqlalchemy.engine.Engine select current_schema()
+2025-09-06 21:23:50,480 [INFO] sqlalchemy.engine.Engine: select current_schema()
+2025-09-06 21:23:50,481 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:23:50,481 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:23:50,855 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2025-09-06 21:23:50,855 [INFO] sqlalchemy.engine.Engine: show standard_conforming_strings
+2025-09-06 21:23:50,856 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:23:50,856 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:23:52,850 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-09-06 21:23:52,850 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2025-09-06 21:23:52,867 INFO sqlalchemy.engine.Engine SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at  
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 21:23:52,867 [INFO] sqlalchemy.engine.Engine: SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 21:23:52,868 INFO sqlalchemy.engine.Engine [generated in 0.00091s] {'telegram_user_id_1': '620190856'}
+2025-09-06 21:23:52,868 [INFO] sqlalchemy.engine.Engine: [generated in 0.00091s] {'telegram_user_id_1': '620190856'}
+🔍 DEBUG: user.id = 3, user.telegram_user_id = 620190856
+2025-09-06 21:23:53,401 INFO sqlalchemy.engine.Engine INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 21:23:53,401 [INFO] sqlalchemy.engine.Engine: INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 21:23:53,401 INFO sqlalchemy.engine.Engine [generated in 0.00052s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1997, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1997\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 7 (50%); Отсутствующие энергии: 3, 4, 6, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 18, 23, 53, 397749, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 18, 23, 53, 397787, tzinfo=datetime.timezone.utc)}
+2025-09-06 21:23:53,401 [INFO] sqlalchemy.engine.Engine: [generated in 0.00052s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1997, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1997\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 7 (50%); Отсутствующие энергии: 3, 4, 6, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 18, 23, 53, 397749, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 18, 23, 53, 397787, tzinfo=datetime.timezone.utc)}
+2025-09-06 21:23:54,123 INFO sqlalchemy.engine.Engine COMMIT
+2025-09-06 21:23:54,123 [INFO] sqlalchemy.engine.Engine: COMMIT
+2025-09-06 21:23:56,189 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads "HTTP/1.1 200 OK"
+2025-09-06 21:23:56,725 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/messages "HTTP/1.1 200 OK"
+2025-09-06 21:24:04,648 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs "HTTP/1.1 200 OK"
+2025-09-06 21:24:06,082 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:07,508 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:10,174 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:11,833 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:13,319 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:14,736 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:16,637 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:18,225 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:20,160 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:22,128 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:23,668 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:25,254 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:26,962 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:28,533 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:30,106 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:32,101 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:33,630 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:35,089 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:36,582 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:38,339 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:40,221 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/runs/run_1xkjM6iRT0lh161jHm8VLoKk "HTTP/1.1 200 OK"
+2025-09-06 21:24:40,605 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_MCVGzBr0dNDshvtXNmKwp7AB/messages "HTTP/1.1 200 OK"
+2025-09-06 21:24:42,756 [INFO] aiogram.event: Update id=410587783 is handled. Duration 54927 ms by bot id=8469358239
+
+🛑 Получен сигнал 2. Останавливаю бота...
+⏹️ Останавливаю polling...
+2025-09-06 21:27:42,542 [INFO] aiogram.dispatcher: Polling stopped
+2025-09-06 21:27:42,545 [ERROR] aiogram.dispatcher: Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected       
+2025-09-06 21:27:42,545 [WARNING] aiogram.dispatcher: Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8469358239)
+✅ Бот остановлен корректно
+2025-09-06 21:27:42,801 [INFO] aiogram.dispatcher: Polling stopped for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py
+🚀 Запускаю бота...
+💡 Для остановки нажмите Ctrl+C
+2025-09-06 21:28:06,618 [INFO] aiogram.dispatcher: Start polling
+2025-09-06 21:28:07,187 [INFO] aiogram.dispatcher: Run polling for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+2025-09-06 21:28:16,441 [INFO] aiogram.event: Update id=410587784 is handled. Duration 597 ms by bot id=8469358239
+2025-09-06 21:28:24,599 [INFO] aiogram.event: Update id=410587785 is handled. Duration 325 ms by bot id=8469358239
+2025-09-06 21:28:33,608 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2025-09-06 21:28:33,608 [INFO] sqlalchemy.engine.Engine: select pg_catalog.version()
+2025-09-06 21:28:33,609 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:28:33,609 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:28:34,129 INFO sqlalchemy.engine.Engine select current_schema()
+2025-09-06 21:28:34,129 [INFO] sqlalchemy.engine.Engine: select current_schema()
+2025-09-06 21:28:34,130 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:28:34,130 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:28:34,866 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2025-09-06 21:28:34,866 [INFO] sqlalchemy.engine.Engine: show standard_conforming_strings
+2025-09-06 21:28:34,866 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 21:28:34,866 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 21:28:41,207 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-09-06 21:28:41,207 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2025-09-06 21:28:41,216 INFO sqlalchemy.engine.Engine SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at  
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 21:28:41,216 [INFO] sqlalchemy.engine.Engine: SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 21:28:41,217 INFO sqlalchemy.engine.Engine [generated in 0.00054s] {'telegram_user_id_1': '620190856'}
+2025-09-06 21:28:41,217 [INFO] sqlalchemy.engine.Engine: [generated in 0.00054s] {'telegram_user_id_1': '620190856'}
+🔍 DEBUG: user.id = 3, user.telegram_user_id = 620190856
+2025-09-06 21:28:41,647 INFO sqlalchemy.engine.Engine INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 21:28:41,647 [INFO] sqlalchemy.engine.Engine: INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 21:28:41,648 INFO sqlalchemy.engine.Engine [generated in 0.00145s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1996, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1996\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 6 (50%); Отсутствующие энергии: 3, 4, 7, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 18, 28, 41, 641334, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 18, 28, 41, 641395, tzinfo=datetime.timezone.utc)}
+2025-09-06 21:28:41,648 [INFO] sqlalchemy.engine.Engine: [generated in 0.00145s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1996, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1996\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 6 (50%); Отсутствующие энергии: 3, 4, 7, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 18, 28, 41, 641334, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 18, 28, 41, 641395, tzinfo=datetime.timezone.utc)}
+2025-09-06 21:28:41,840 INFO sqlalchemy.engine.Engine COMMIT
+2025-09-06 21:28:41,840 [INFO] sqlalchemy.engine.Engine: COMMIT
+2025-09-06 21:28:43,611 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads "HTTP/1.1 200 OK"
+2025-09-06 21:28:44,276 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/messages "HTTP/1.1 200 OK"
+2025-09-06 21:28:45,399 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs "HTTP/1.1 200 OK"
+2025-09-06 21:28:46,970 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:50,222 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:51,776 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:53,347 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:54,930 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:57,438 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:28:59,362 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:01,011 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:02,822 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:04,268 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:05,896 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:07,392 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:30,841 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/runs/run_Hc9sg07b4HwLZYTLMbrW4sHe "HTTP/1.1 200 OK"
+2025-09-06 21:29:31,452 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_ULi3Mzk99BzGFW5nPhHdF1zN/messages "HTTP/1.1 200 OK"
+2025-09-06 21:29:33,971 [INFO] aiogram.event: Update id=410587786 is handled. Duration 62660 ms by bot id=8469358239
+
+🛑 Получен сигнал 2. Останавливаю бота...
+⏹️ Останавливаю polling...
+2025-09-06 21:32:16,080 [INFO] aiogram.dispatcher: Polling stopped
+2025-09-06 21:32:16,081 [ERROR] aiogram.dispatcher: Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected       
+2025-09-06 21:32:16,081 [WARNING] aiogram.dispatcher: Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8469358239)
+✅ Бот остановлен корректно
+2025-09-06 21:32:16,344 [INFO] aiogram.dispatcher: Polling stopped for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+
+C:\Users\noadmin\Desktop\Milana Tarba>node --version
+v22.19.0
+
+C:\Users\noadmin\Desktop\Milana Tarba>   npm install -g wrangler
+
+changed 50 packages in 1m
+
+7 packages are looking for funding
+  run `npm fund` for details
+
+C:\Users\noadmin\Desktop\Milana Tarba>   wrangler login
+
+ ⛅️ wrangler 4.34.0
+───────────────────
+
+X [ERROR] The `python_workers` compatibility flag is required to use Python.
+
+
+🪵  Logs were written to "C:\Users\noadmin\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2025-09-06_18-34-09_643.log"
+
+C:\Users\noadmin\Desktop\Milana Tarba>   wrangler login
+
+ ⛅️ wrangler 4.34.0
+───────────────────
+
+X [ERROR] The `python_workers` compatibility flag is required to use Python.
+
+
+🪵  Logs were written to "C:\Users\noadmin\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2025-09-06_18-34-36_173.log"
+
+C:\Users\noadmin\Desktop\Milana Tarba>   wrangler login
+
+ ⛅️ wrangler 4.34.0
+───────────────────
+
+X [ERROR] The `python_workers` compatibility flag is required to use Python.
+
+
+🪵  Logs were written to "C:\Users\noadmin\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2025-09-06_18-36-06_005.log"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git init
+Initialized empty Git repository in C:/Users/noadmin/Desktop/Milana Tarba/.git/
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+warning: in the working copy of '.env', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.env.example', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ARCHITECTURE.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'BACKLOG.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'main.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'migrations/versions/03662ab20c87_initial_migration.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'migrations/versions/6c293c4b8db3_change_telegram_user_id_to_string.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/config.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/db/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/db/base.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/db/models.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/handlers/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/handlers/start.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/middlewares/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/middlewares/di.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/analytics/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/analytics/chs.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/openai_client.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_chs.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Книга Знаний.txt', LF will be replaced by CRLF the next time Git touches it
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Initial commit: Telegram psychology bot with Railway deployment"
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'noadmin@nonode.(none)')
+
+C:\Users\noadmin\Desktop\Milana Tarba>git config --global user.email "your-email@example.com"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git config --global user.email "nopointttt@gmail.com"  
+
+C:\Users\noadmin\Desktop\Milana Tarba>git config --global user.name "nopoint"  
+
+C:\Users\noadmin\Desktop\Milana Tarba>git config --global user.email "milana@example.com"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git config --global user.name "Milana Tarba"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Initial commit: Telegram psychology bot with Railway deployment"
+[master (root-commit) 28bef90] Initial commit: Telegram psychology bot with Railway deployment
+ 87 files changed, 12238 insertions(+)
+ create mode 100644 .env
+ create mode 100644 .env.example
+ create mode 100644 ARCHITECTURE.md
+ create mode 100644 BACKLOG.md
+ create mode 100644 CLOUDFLARE_SETUP.md
+ create mode 100644 DATABASE_SETUP.md
+ create mode 100644 OPENAI_SETUP.md
+ create mode 100644 OPENAI_SYSTEM_PROMPT.md
+ create mode 100644 Procfile
+ create mode 100644 RAILWAY_SETUP.md
+ create mode 100644 README.md
+ create mode 100644 ai_assistant_spec.yaml
+ create mode 100644 alembic.ini
+ create mode 100644 delete_webhook.py
+ create mode 100644 env.example
+ create mode 100644 functions/api/telegram.js
+ create mode 100644 index.html
+ create mode 100644 init_migrations.py
+ create mode 100644 main.py
+ create mode 100644 migrations/__pycache__/env.cpython-313.pyc
+ create mode 100644 migrations/env.py
+ create mode 100644 migrations/script.py.mako
+ create mode 100644 migrations/versions/03662ab20c87_initial_migration.py
+ create mode 100644 migrations/versions/6c293c4b8db3_change_telegram_user_id_to_string.py
+ create mode 100644 migrations/versions/__pycache__/03662ab20c87_initial_migration.cpython-313.pyc
+ create mode 100644 migrations/versions/__pycache__/6c293c4b8db3_change_telegram_user_id_to_string.cpython-313.pyc
+ create mode 100644 package.json
+ create mode 100644 python
+ create mode 100644 railway.json
+ create mode 100644 requirements.txt
+ create mode 100644 src/__init__.py
+ create mode 100644 src/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/__pycache__/config.cpython-313.pyc
+ create mode 100644 src/config.py
+ create mode 100644 src/db/__init__.py
+ create mode 100644 src/db/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/db/__pycache__/base.cpython-313.pyc
+ create mode 100644 src/db/__pycache__/connection.cpython-313.pyc
+ create mode 100644 src/db/__pycache__/models.cpython-313.pyc
+ create mode 100644 src/db/base.py
+ create mode 100644 src/db/connection.py
+ create mode 100644 src/db/models.py
+ create mode 100644 src/handlers/__init__.py
+ create mode 100644 src/handlers/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/handlers/__pycache__/analyze.cpython-313.pyc
+ create mode 100644 src/handlers/__pycache__/start.cpython-313.pyc
+ create mode 100644 src/handlers/analyze.py
+ create mode 100644 src/handlers/start.py
+ create mode 100644 src/middlewares/__init__.py
+ create mode 100644 src/middlewares/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/middlewares/__pycache__/di.cpython-313.pyc
+ create mode 100644 src/middlewares/di.py
+ create mode 100644 src/services/__init__.py
+ create mode 100644 src/services/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/services/__pycache__/analytics_storage.cpython-313.pyc
+ create mode 100644 src/services/__pycache__/openai_client.cpython-313.pyc
+ create mode 100644 src/services/__pycache__/openai_prompts.cpython-313.pyc
+ create mode 100644 src/services/__pycache__/openai_service.cpython-313.pyc
+ create mode 100644 src/services/__pycache__/user_service.cpython-313.pyc
+ create mode 100644 src/services/analytics/__init__.py
+ create mode 100644 src/services/analytics/__pycache__/__init__.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/analytics_service.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/chd.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/chs.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/matrix.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/name_number.cpython-313.pyc
+ create mode 100644 src/services/analytics/__pycache__/transliteration.cpython-313.pyc
+ create mode 100644 src/services/analytics/analytics_service.py
+ create mode 100644 src/services/analytics/chd.py
+ create mode 100644 src/services/analytics/chs.py
+ create mode 100644 src/services/analytics/matrix.py
+ create mode 100644 src/services/analytics/name_number.py
+ create mode 100644 src/services/analytics/transliteration.py
+ create mode 100644 src/services/analytics_storage.py
+ create mode 100644 src/services/openai_client.py
+ create mode 100644 src/services/openai_prompts.py
+ create mode 100644 src/services/openai_service.py
+ create mode 100644 src/services/user_service.py
+ create mode 100644 test_algorithms.py
+ create mode 100644 test_database.py
+ create mode 100644 test_openai.py
+ create mode 100644 tests/__pycache__/test_analytics_algorithms.cpython-313-pytest-8.4.1.pyc
+ create mode 100644 tests/__pycache__/test_chs.cpython-313-pytest-8.4.1.pyc
+ create mode 100644 tests/test_analytics_algorithms.py
+ create mode 100644 tests/test_chs.py
+ create mode 100644 wrangler.toml
+ create mode 100644 "\320\232\320\275\320\270\320\263\320\260 \320\227\320\275\320\260\320\275\320\270\320\271.txt"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git remote add origin https://github.com/@cyfrovoi_psiholog_bot/telegram-psychology-bot.git
+
+C:\Users\noadmin\Desktop\Milana Tarba>git branch -M main
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push -u origin main
+remote: Repository not found.
+fatal: repository 'https://github.com/@cyfrovoi_psiholog_bot/telegram-psychology-bot.git/' not found
+
+C:\Users\noadmin\Desktop\Milana Tarba>git remote set-url origin https://github.com/nopointttt/milana_tarba.git
+
+C:\Users\noadmin\Desktop\Milana Tarba>git remote -v
+origin  https://github.com/nopointttt/milana_tarba.git (fetch)
+origin  https://github.com/nopointttt/milana_tarba.git (push)
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push -u origin main
+info: please complete authentication in your browser...
+To https://github.com/nopointttt/milana_tarba.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push -u origin main
+To https://github.com/nopointttt/milana_tarba.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push -u origin main
+To https://github.com/nopointttt/milana_tarba.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+C:\Users\noadmin\Desktop\Milana Tarba>git pull origin main --allow-unrelated-histories
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 852 bytes | 170.00 KiB/s, done.
+From https://github.com/nopointttt/milana_tarba
+ * branch            main       -> FETCH_HEAD
+ * [new branch]      main       -> origin/main
+Auto-merging README.md
+CONFLICT (add/add): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
+
+C:\Users\noadmin\Desktop\Milana Tarba>dir railway.json
+ Volume in drive C has no label.
+ Volume Serial Number is E204-0A69
+
+ Directory of C:\Users\noadmin\Desktop\Milana Tarba
+
+09/06/2025  09:39 PM               311 railway.json
+               1 File(s)            311 bytes
+               0 Dir(s)  328,949,293,056 bytes free
+
+C:\Users\noadmin\Desktop\Milana Tarba>type railway.json
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python main.py",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
+
+C:\Users\noadmin\Desktop\Milana Tarba>type Procfile
+web: python main.py
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo [phases.setup] > nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo nixPkgs = ["python311", "pip"] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo. >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo [phases.install] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo cmds = ["pip install -r requirements.txt"] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo. >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo [phases.build] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo cmds = ["echo 'Build complete'"] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo. >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo [start] >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo cmd = "python main.py" >> nixpacks.toml
+
+C:\Users\noadmin\Desktop\Milana Tarba>type nixpacks.toml
+[phases.setup] 
+nixPkgs = ["python311", "pip"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[phases.build]
+cmds = ["echo 'Build complete'"]
+
+[start]
+cmd = "python main.py"
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Add nixpacks.toml for Railway deployment"
+[main d5151be] Add nixpacks.toml for Railway deployment
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push origin main
+Enumerating objects: 115, done.
+Counting objects: 100% (115/115), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (108/108), done.
+Writing objects: 100% (113/113), 208.43 KiB | 4.74 MiB/s, done.
+Total 113 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: 28bef9090cf9e58ab52bf2d344bfd2ce3e655cef
+remote:            path: .env:3
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/nopointttt/milana_tarba/security/secret-scanning/unblock-secret/32L3IT0gPXXlvVRhcSzQTizHYSF
+remote:
+remote:
+remote:
+To https://github.com/nopointttt/milana_tarba.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo FROM python:3.11-slim > Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo WORKDIR /app >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo COPY requirements.txt . >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo RUN pip install -r requirements.txt >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo COPY . . >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo EXPOSE 8000 >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo CMD ["python", "main.py"] >> Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>type Dockerfile
+FROM python:3.11-slim 
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["python", "main.py"]
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Add Dockerfile for Railway deployment"
+[main b30e296] Add Dockerfile for Railway deployment
+ 1 file changed, 7 insertions(+)
+ create mode 100644 Dockerfile
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push origin main
+Enumerating objects: 118, done.
+Counting objects: 100% (118/118), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (111/111), done.
+Writing objects: 100% (116/116), 208.78 KiB | 4.35 MiB/s, done.
+Total 116 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: 28bef9090cf9e58ab52bf2d344bfd2ce3e655cef
+remote:            path: .env:3
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/nopointttt/milana_tarba/security/secret-scanning/unblock-secret/32L3IT0gPXXlvVRhcSzQTizHYSF
+remote:
+remote:
+remote:
+To https://github.com/nopointttt/milana_tarba.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+
+C:\Users\noadmin\Desktop\Milana Tarba>git rm --cached .env
+rm '.env'
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo .env >> .gitignore
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Remove .env from Git and add to .gitignore"
+[main b8244fa] Remove .env from Git and add to .gitignore
+ 2 files changed, 1 insertion(+), 14 deletions(-)
+ delete mode 100644 .env
+ create mode 100644 .gitignore
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push origin main
+Enumerating objects: 121, done.
+Counting objects: 100% (121/121), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (113/113), done.
+Writing objects: 100% (119/119), 209.04 KiB | 4.27 MiB/s, done.
+Total 119 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: 28bef9090cf9e58ab52bf2d344bfd2ce3e655cef
+remote:            path: .env:3
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/nopointttt/milana_tarba/security/secret-scanning/unblock-secret/32L3IT0gPXXlvVRhcSzQTizHYSF
+remote:
+remote:
+remote:
+To https://github.com/nopointttt/milana_tarba.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py         
+🏠 Запуск в локальном режиме (polling)
+❌ Критическая ошибка: cannot access local variable 'app' where it is not associated with a value
+
+C:\Users\noadmin\Desktop\Milana Tarba>git rm --cached .env
+fatal: pathspec '.env' did not match any files
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo .env >> .gitignore
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Remove .env from Git and add to .gitignore"
+[main 312c0cd] Remove .env from Git and add to .gitignore
+ 2 files changed, 1 insertion(+)
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push origin main
+Enumerating objects: 128, done.
+Counting objects: 100% (128/128), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (119/119), done.
+Writing objects: 100% (126/126), 209.51 KiB | 4.36 MiB/s, done.
+Total 126 (delta 9), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (9/9), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: 28bef9090cf9e58ab52bf2d344bfd2ce3e655cef
+remote:            path: .env:3
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/nopointttt/milana_tarba/security/secret-scanning/unblock-secret/32L3IT0gPXXlvVRhcSzQTizHYSF
+remote:
+remote:
+remote:
+To https://github.com/nopointttt/milana_tarba.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+
+C:\Users\noadmin\Desktop\Milana Tarba>git rm --cached .env
+fatal: pathspec '.env' did not match any files
+
+C:\Users\noadmin\Desktop\Milana Tarba>echo .env >> .gitignore
+
+C:\Users\noadmin\Desktop\Milana Tarba>git add .
+
+C:\Users\noadmin\Desktop\Milana Tarba>git commit -m "Remove .env from Git and add to .gitignore"
+[main 25b7fd5] Remove .env from Git and add to .gitignore
+ 1 file changed, 1 insertion(+)
+
+C:\Users\noadmin\Desktop\Milana Tarba>git push -f origin main
+Enumerating objects: 131, done.
+Counting objects: 100% (131/131), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (121/121), done.
+Writing objects: 100% (129/129), 209.75 KiB | 4.37 MiB/s, done.
+Total 129 (delta 10), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (10/10), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: 28bef9090cf9e58ab52bf2d344bfd2ce3e655cef
+remote:            path: .env:3
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/nopointttt/milana_tarba/security/secret-scanning/unblock-secret/32L3IT0gPXXlvVRhcSzQTizHYSF
+remote:
+remote:
+remote:
+To https://github.com/nopointttt/milana_tarba.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/nopointttt/milana_tarba.git'
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py         
+🏠 Запуск в локальном режиме (polling)
+❌ Критическая ошибка: cannot access local variable 'app' where it is not associated with a value
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py
+🏠 Запуск в локальном режиме (polling)
+🚀 Запускаю бота...
+💡 Для остановки нажмите Ctrl+C
+2025-09-06 22:21:37,912 [INFO] aiogram.dispatcher: Start polling
+2025-09-06 22:21:38,606 [INFO] aiogram.dispatcher: Run polling for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+2025-09-06 22:21:52,185 [INFO] aiogram.event: Update id=410587787 is handled. Duration 459 ms by bot id=8469358239
+2025-09-06 22:21:57,382 [INFO] aiogram.event: Update id=410587788 is handled. Duration 224 ms by bot id=8469358239
+2025-09-06 22:22:03,102 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2025-09-06 22:22:03,102 [INFO] sqlalchemy.engine.Engine: select pg_catalog.version()
+2025-09-06 22:22:03,103 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 22:22:03,103 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 22:22:03,492 INFO sqlalchemy.engine.Engine select current_schema()
+2025-09-06 22:22:03,492 [INFO] sqlalchemy.engine.Engine: select current_schema()
+2025-09-06 22:22:03,492 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 22:22:03,492 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 22:22:04,691 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2025-09-06 22:22:04,691 [INFO] sqlalchemy.engine.Engine: show standard_conforming_strings
+2025-09-06 22:22:04,691 INFO sqlalchemy.engine.Engine [raw sql] {}
+2025-09-06 22:22:04,691 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2025-09-06 22:22:05,661 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-09-06 22:22:05,661 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2025-09-06 22:22:05,666 INFO sqlalchemy.engine.Engine SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at  
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 22:22:05,666 [INFO] sqlalchemy.engine.Engine: SELECT "user".id, "user".telegram_user_id, "user".username, "user".full_name, "user".created_at, "user".updated_at
+FROM "user"
+WHERE "user".telegram_user_id = %(telegram_user_id_1)s::VARCHAR
+2025-09-06 22:22:05,666 INFO sqlalchemy.engine.Engine [generated in 0.00050s] {'telegram_user_id_1': '620190856'}
+2025-09-06 22:22:05,666 [INFO] sqlalchemy.engine.Engine: [generated in 0.00050s] {'telegram_user_id_1': '620190856'}
+🔍 DEBUG: user.id = 3, user.telegram_user_id = 620190856
+2025-09-06 22:22:06,044 INFO sqlalchemy.engine.Engine INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 22:22:06,044 [INFO] sqlalchemy.engine.Engine: INSERT INTO reportrequest (user_id, full_name, birth_date, status, result_text, error, created_at, updated_at) VALUES (%(user_id)s::INTEGER, %(full_name)s::VARCHAR, %(birth_date)s::DATE, %(status)s, %(result_text)s::VARCHAR, %(error)s::VARCHAR, %(created_at)s::TIMESTAMP WITHOUT TIME ZONE, %(updated_at)s::TIMESTAMP WITHOUT TIME ZONE) RETURNING reportrequest.id
+2025-09-06 22:22:06,044 INFO sqlalchemy.engine.Engine [generated in 0.00060s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1997, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1997\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 7 (50%); Отсутствующие энергии: 3, 4, 6, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 19, 22, 6, 42014, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 19, 22, 6, 42034, tzinfo=datetime.timezone.utc)}
+2025-09-06 22:22:06,044 [INFO] sqlalchemy.engine.Engine: [generated in 0.00060s] {'user_id': 3, 'full_name': 'Жаслан', 'birth_date': datetime.date(1997, 5, 20), 'status': 'DONE', 'result_text': '🔮 **АНАЛИЗ ПО ЦИФРОВОЙ ПСИХОЛОГИИ**\n==================================================\n\n📋 **ВХОДНЫЕ ДАННЫЕ:**\n• Дата рождения: 20.05.1997\n• Имя: ... (296 characters truncated) ... бые энергии: 1, 2, 5, 7 (50%); Отсутствующие энергии: 3, 4, 6, 8\n\n💭 **ИНТЕРПРЕТАЦИИ:**\n• Число Имени: Дипломатия, сотрудничество, чувствительность', 'error': None, 'created_at': datetime.datetime(2025, 9, 6, 19, 22, 6, 42014, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 9, 6, 19, 22, 6, 42034, tzinfo=datetime.timezone.utc)}
+2025-09-06 22:22:06,253 INFO sqlalchemy.engine.Engine COMMIT
+2025-09-06 22:22:06,253 [INFO] sqlalchemy.engine.Engine: COMMIT
+2025-09-06 22:22:07,664 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads "HTTP/1.1 200 OK"
+2025-09-06 22:22:08,122 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/messages "HTTP/1.1 200 OK"
+2025-09-06 22:22:38,886 [INFO] httpx: HTTP Request: POST https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs "HTTP/1.1 200 OK"
+2025-09-06 22:22:40,543 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:41,994 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:43,513 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:45,145 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:46,754 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:48,232 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:49,793 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:22:51,395 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:23:09,794 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/runs/run_0ZlSgjHDLmDxjI8xtV5oPm7w "HTTP/1.1 200 OK"
+2025-09-06 22:23:11,385 [INFO] httpx: HTTP Request: GET https://api.openai.com/v1/threads/thread_jPPaz7m2SGJ5fyoMkH76X1c5/messages "HTTP/1.1 200 OK"
+2025-09-06 22:23:13,055 [INFO] aiogram.event: Update id=410587789 is handled. Duration 71825 ms by bot id=8469358239
+
+🛑 Получен сигнал 2. Останавливаю бота...
+⏹️ Останавливаю polling...
+2025-09-06 22:25:54,006 [INFO] aiogram.dispatcher: Polling stopped
+2025-09-06 22:25:54,009 [ERROR] aiogram.dispatcher: Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected       
+2025-09-06 22:25:54,009 [WARNING] aiogram.dispatcher: Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8469358239)
+✅ Бот остановлен корректно
+2025-09-06 22:25:54,275 [INFO] aiogram.dispatcher: Polling stopped for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+
+C:\Users\noadmin\Desktop\Milana Tarba>Start-Process python -ArgumentList "main.py" -WindowStyle Hidden
+'Start-Process' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\noadmin\Desktop\Milana Tarba>python main.py > bot.log 2>&1
+
+C:\Users\noadmin\Desktop\Milana Tarba>^Zbg
+C:\Users\noadmin\Desktop\Milana Tarba>bg
+'bg' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\noadmin\Desktop\Milana Tarba>@echo off
+echo Starting bot...
+Starting bot...
+start /B python main.py
+echo Bot started in background
+Bot started in background
+pause
+Press any key to continue . . . 🏠 Запуск в локальном режиме (polling)
+
+🚀 Запускаю бота...
+💡 Для остановки нажмите Ctrl+C
+2025-09-06 22:27:07,780 [INFO] aiogram.dispatcher: Start polling
+2025-09-06 22:27:08,156 [INFO] aiogram.dispatcher: Run polling for bot @cyfrovoi_psiholog_bot id=8469358239 - 'Цифровой Психолог'
+start_bot.bat
+'start_bot.bat' is not recognized as an internal or external command,
+operable program or batch file.
+2025-09-06 22:27:39,984 [INFO] aiogram.event: Update id=410587790 is handled. Duration 689 ms by bot id=8469358239
+2025-09-06 22:27:42,365 [INFO] aiogram.event: Update id=410587791 is handled. Duration 216 ms by bot id=8469358239
+
+
+
+
+
+
+
+
+             
+

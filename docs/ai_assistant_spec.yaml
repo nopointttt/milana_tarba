@@ -1,0 +1,101 @@
+# PROMPT_TYPE: INITIALIZATION
+# MISSION_ID: project_ai_assistant_mvp_final
+# DESCRIPTION: Запуск проекта AI-ассистента (MVP), включая проектирование, разработку и развертывание модуля "Аналитик".
+
+---
+# 1. SPECIFICATION
+PROJECT_GOAL: "Разработка и запуск MVP Telegram-бота, выполняющего функции эксперта по цифровой психологии на основе 'Книги Знаний по Цифрологии'."
+STAKEHOLDERS:
+  CLIENT: "Владелец аккаунтов Cloudflare, Neon, OpenAI"
+  EXECUTOR: "Самозанятый Утегенов Жаслан Бауржанович"
+  UAT_LEAD: "Мария"
+TECH_STACK:
+  ARCHITECTURE: "Serverless on Cloudflare"
+  LOGIC_RUNTIME: "Python 3.11+ / Aiogram 3.x on Cloudflare Workers"
+  DATABASE: "Serverless PostgreSQL (Neon)"
+  STORAGE: "Cloudflare R2"
+  CACHE: "Cloudflare KV"
+  AI_PROVIDER: "OpenAI API"
+  AI_MODEL: "GPT-4.1 Turbo"
+
+---
+# 2. FUNCTIONAL_REQUIREMENTS (MODULE: "Analyst")
+USER_FLOW_ONBOARDING:
+  - TRIGGER: Command `/start`.
+  - BOT_ACTION: Отправить приветственное сообщение.
+  - MESSAGE_CONTENT: "Представиться как ассистент по цифровой психологии (система Миланы Тарба), описать возможности, запросить ПОЛНУЮ ДАТУ РОЖДЕНИЯ и ПОЛНОЕ ИМЯ."
+
+INPUT_DATA:
+  - "Полная дата рождения (dd.mm.yyyy)."
+  - "Полное имя (кириллица или латиница)."
+
+CORE_LOGIC_CALCULATIONS:
+  - [cite_start]"Расчет Числа Сознания (ЧС)[cite: 291, 305]."
+  - [cite_start]"Расчет Числа Действия (ЧД)[cite: 292, 984]."
+  - [cite_start]"Построение и анализ Матрицы[cite: 293, 1075]."
+  - [cite_start]"Расчет Числа Имени[cite: 1067]."
+  - SOURCE_OF_TRUTH: "'Книга Знаний по Цифрологии'."
+
+LOGIC_NAME_HANDLING:
+  DESCRIPTION: "Алгоритм обработки имени для расчета Числа Имени."
+  WORKFLOW:
+    - IF name is Cyrillic, THEN transliterate to Latin script.
+    - SEND confirmation_message to user: `Я правильно преобразовал ваше имя в [Transliterated Name]? Если нет, пожалуйста, отправьте верный вариант латиницей.`
+    - IF user confirms, THEN use transliterated name.
+    - IF user sends a new Latin version, THEN use user's version.
+
+OUTPUT_REPORT:
+  FORMAT: "Структурированный текстовый отчет."
+  TASK: "Исполнитель должен спроектировать и предложить формат отчета для согласования с Заказчиком на Фазе 0."
+
+PERSONA_TONE_OF_VOICE:
+  [cite_start]SOURCE: "Формулировки, стиль общения и тон заимствуются из 'Книги Знаний по Цифрологии'[cite: 57]."
+  ATTRIBUTES: "Справедливый, теплый, поддерживающий, эмпатичный, не льстит, не грубит."
+
+DATA_PERSISTENCE: "Сохранять историю диалогов с пользователями в БД Neon."
+
+---
+# 3. NON_FUNCTIONAL_REQUIREMENTS
+CODE_QUALITY: "Код соответствует стандартам `black` и `ruff`. Весь код сопровождается docstrings."
+TESTING:
+  - "Ключевая бизнес-логика покрыта unit-тестами."
+  - "AI-агент должен автономно сгенерировать 3-5 тестовых кейсов на основе правил из 'Книги Знаний' для валидации алгоритмов расчета."
+CI_CD: "Настроен автоматический pipeline (GitHub Actions) для тестирования и развертывания в `staging` и `production`."
+MONITORING: "Интегрирована система логирования и отслеживания ошибок (Sentry или аналог)."
+SECURITY: "Все секреты (токены, ключи API) управляются через зашифрованное хранилище Cloudflare."
+UX_ERROR_HANDLING: "В случае сбоя бот сообщает об ошибке и предлагает пути решения."
+
+---
+# 4. OUT_OF_SCOPE (MVP)
+- "Модуль «Маркетолог-Креатор»"
+- "Модуль «Ассистент по Продажам»"
+
+---
+# 5. EXECUTION_PLAN_MVP
+- PHASE: 0
+  DURATION: "1 неделя"
+  NAME: "Архитектура и настройка"
+  TASKS:
+    - "Спроектировать serverless-архитектуру."
+    - "Настроить CI/CD pipeline и окружения."
+    - "Спроектировать и СОГЛАСОВАТЬ с Заказчиком формат итогового отчета."
+
+- PHASE: 1
+  DURATION: "3 недели"
+  NAME: "Разработка ядра модуля «Аналитик»"
+  TASKS:
+    - "Реализовать все алгоритмы расчетов."
+    - "Интегрировать OpenAI API."
+    - "Реализовать формирование отчетов по утвержденному формату."
+    - "Настроить логику обработки имени."
+
+- PHASE: 2
+  DURATION: "1 неделя"
+  NAME: "Интеграция и финальное тестирование"
+  TASKS:
+    - "Подключить ядро к Telegram API (Aiogram)."
+    - "Провести полное внутреннее тестирование."
+    - "Провести UAT с ответственным лицом (Мария)."
+    - "Исправить баги по итогам тестов."
+    - "Развернуть финальную версию в `production`."
+    - "Подготовить и передать проектную документацию."

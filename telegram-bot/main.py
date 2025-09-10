@@ -25,7 +25,7 @@ from aiogram import Bot, Dispatcher
 
 from src.config import Settings
 from src.db.connection import initialize_database
-from src.handlers import context_handler
+from src.handlers import context_handler, memory_handler
 
 
 def setup_logging() -> None:
@@ -59,6 +59,7 @@ async def polling_app() -> None:
 
     # Routers
     dp.include_router(context_handler.router)
+    dp.include_router(memory_handler.router)
 
     # Настройка graceful shutdown
     shutdown_event = asyncio.Event()
@@ -115,6 +116,7 @@ async def webhook_app() -> web.Application:
     
     # Регистрируем роутеры
     dp.include_router(context_handler.router)
+    dp.include_router(memory_handler.router)
     
     # Создаем webhook приложение
     app = web.Application()

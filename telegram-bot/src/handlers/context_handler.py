@@ -13,6 +13,11 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from src.services.openai_context_service import OpenAIContextService
 from src.config import Settings
 from src.db.connection import get_db_manager
+from src.services.analytics.chs import calc_chs
+from src.services.analytics.chd import calc_chd
+from src.services.analytics.name_number import calc_name_number
+from src.services.analytics.matrix import build_matrix
+from datetime import datetime
 
 router = Router()
 
@@ -54,6 +59,9 @@ additional_data: Dict[int, List[Dict[str, str]]] = {}
 # Хранилище закрепленных сообщений
 pinned_messages: Dict[int, int] = {}
 
+# Флаг что данные только что обновлены
+data_just_updated: Dict[int, bool] = {}
+
 # Приветственное сообщение
 WELCOME_MESSAGE = """🌟 ПРИВЕТ! Я ТВОЙ ЦИФРОВОЙ ПСИХОЛОГ ПО СИСТЕМЕ МИЛАНЫ ТАРБА.
 
@@ -84,11 +92,15 @@ async def on_start(message: types.Message) -> None:
     # Инициализируем новый контекст
     user_contexts[user_id] = []
     
-    # Проверяем, есть ли уже данные пользователя
-    if user_id in user_data:
+    # Проверяем, есть ли уже ВАЛИДНЫЕ данные пользователя
+    if user_id in user_data and _has_valid_user_data(user_id):
         # Показываем закрепленное сообщение с данными
         await show_user_data_message(message)
     else:
+        # Очищаем неполные данные
+        if user_id in user_data:
+            del user_data[user_id]
+        
         # Показываем приветствие с кнопкой ввода данных
         await message.answer(
             WELCOME_MESSAGE,
@@ -158,6 +170,7 @@ def is_additional_data(message_text: str, user_id: int) -> bool:
     user_main_data = user_data[user_id]
     lines = [line.strip() for line in message_text.strip().split('\n') if line.strip()]
     
+    # Поддержка многострочного ввода (2 строки)
     if len(lines) == 2:
         name, date = lines[0], lines[1]
         # Если имя или дата отличаются от основных данных пользователя
@@ -165,16 +178,48 @@ def is_additional_data(message_text: str, user_id: int) -> bool:
             (name != user_main_data.get('name') or date != user_main_data.get('birth_date'))):
             return True
     
+    # Поддержка однострочного ввода "Имя 01.01.1990"
+    elif len(lines) == 1:
+        text = lines[0]
+        # Пытаемся разделить по пробелу
+        parts = text.split()
+        if len(parts) >= 2:
+            # Берем последнюю часть как дату, остальное как имя
+            date = parts[-1]
+            name = ' '.join(parts[:-1])
+            
+            if (is_name_format(name) and is_date_format(date) and 
+                (name != user_main_data.get('name') or date != user_main_data.get('birth_date'))):
+                return True
+    
     return False
 
 def extract_additional_data(message_text: str) -> Dict[str, str]:
     """Извлекает дополнительные данные из сообщения."""
     lines = [line.strip() for line in message_text.strip().split('\n') if line.strip()]
+    
+    # Поддержка многострочного ввода (2 строки)
     if len(lines) == 2:
         return {
             'name': lines[0],
             'birth_date': lines[1]
         }
+    
+    # Поддержка однострочного ввода "Имя 01.01.1990"
+    elif len(lines) == 1:
+        text = lines[0]
+        parts = text.split()
+        if len(parts) >= 2:
+            # Берем последнюю часть как дату, остальное как имя
+            date = parts[-1]
+            name = ' '.join(parts[:-1])
+            
+            if is_name_format(name) and is_date_format(date):
+                return {
+                    'name': name,
+                    'birth_date': date
+                }
+    
     return {}
 
 def clear_additional_data(user_id: int) -> None:
@@ -182,13 +227,96 @@ def clear_additional_data(user_id: int) -> None:
     if user_id in additional_data:
         additional_data[user_id] = []
 
+def calculate_user_analytics(name: str, birth_date: str) -> Dict[str, Any]:
+    """Рассчитывает аналитику пользователя (ЧС, ЧД, ЧИ, матрица)."""
+    try:
+        # Парсим дату
+        date_obj = datetime.strptime(birth_date, "%d.%m.%Y")
+        
+        # Рассчитываем ЧС и ЧД
+        chs = calc_chs(date_obj)
+        chd = calc_chd(date_obj)
+        
+        # Рассчитываем ЧИ
+        name_number = calc_name_number(name)
+        
+        # Строим матрицу
+        matrix = build_matrix(date_obj)
+        
+        # Извлекаем энергии из матрицы с описаниями
+        matrix_energies = {}
+        energy_descriptions = {
+            "1": "Лидерство",
+            "2": "Дипломатия", 
+            "3": "Творчество",
+            "4": "Стабильность",
+            "5": "Свобода",
+            "6": "Гармония",
+            "7": "Мудрость",
+            "8": "Материя",
+            "9": "Завершение"
+        }
+        
+        for i in range(1, 10):
+            count = matrix.digit_counts.get(i, 0)
+            if count > 0:
+                description = energy_descriptions.get(str(i), "")
+                matrix_energies[str(i)] = f"{count} ({description})"
+        
+        
+        return {
+            "chs": chs,
+            "chd": chd,
+            "name_number": name_number,
+            "matrix_energies": matrix_energies
+        }
+    except Exception as e:
+        print(f"Ошибка при расчете аналитики: {e}")
+        return {
+            "chs": None,
+            "chd": None,
+            "name_number": None,
+            "matrix_energies": {}
+        }
+
+def _has_valid_user_data(user_id: int) -> bool:
+    """Проверяет, есть ли у пользователя валидные данные (имя и дата)."""
+    if user_id not in user_data:
+        return False
+    
+    data = user_data[user_id]
+    name = data.get("name", "").strip()
+    birth_date = data.get("birth_date", "").strip()
+    
+    # Проверяем, что есть и имя, и дата, и они не дефолтные
+    if not name or not birth_date:
+        return False
+    
+    # Проверяем, что это не дефолтные значения
+    if name in ["Не указано", "Хочу знать"] or birth_date == "Не указано":
+        return False
+    
+    # Проверяем, что дата в правильном формате
+    if not is_date_format(birth_date):
+        return False
+    
+    # Проверяем, что имя в правильном формате
+    if not is_name_format(name):
+        return False
+    
+    return True
+
 async def handle_data_input(message: types.Message) -> bool:
     """Обработка ввода данных пользователем. Возвращает True если данные обработаны."""
     user_id = message.from_user.id
     user_message = message.text.strip()
     
-    # Если у пользователя уже есть данные, не обрабатываем как ввод данных
-    if user_id in user_data:
+    # Очищаем невалидные данные, если они есть
+    if user_id in user_data and not _has_valid_user_data(user_id):
+        del user_data[user_id]
+    
+    # Если у пользователя уже есть ВАЛИДНЫЕ данные, не обрабатываем как ввод данных
+    if user_id in user_data and _has_valid_user_data(user_id):
         return False
     
     # Проверяем, является ли сообщение вводом данных
@@ -225,6 +353,42 @@ async def handle_data_input(message: types.Message) -> bool:
         
         # Отправляем статусное сообщение
         status_msg = await send_status_message(message, "Проверяю введенные данные...")
+        
+        # Проверяем, является ли это комбинированным вводом "Имя Дата" или "Дата Имя"
+        parts = text.split()
+        if len(parts) >= 2:
+            # Пробуем разные варианты парсинга
+            for i in range(len(parts)):
+                # Вариант 1: "Имя Дата" - берем последнюю часть как дату
+                date = parts[-1]
+                name = ' '.join(parts[:-1])
+                if is_name_format(name) and is_date_format(date):
+                    # Это комбинированный ввод "Имя Дата"
+                    if await validate_and_save_data(message, name, date):
+                        # Удаляем статусное сообщение
+                        try:
+                            if status_msg:
+                                await status_msg.delete()
+                        except Exception:
+                            pass
+                        return True
+                    break
+                
+                # Вариант 2: "Дата Имя" - берем первую часть как дату
+                if i == 0:  # Проверяем только один раз
+                    date = parts[0]
+                    name = ' '.join(parts[1:])
+                    if is_date_format(date) and is_name_format(name):
+                        # Это комбинированный ввод "Дата Имя"
+                        if await validate_and_save_data(message, name, date):
+                            # Удаляем статусное сообщение
+                            try:
+                                if status_msg:
+                                    await status_msg.delete()
+                            except Exception:
+                                pass
+                            return True
+                        break
         
         # Проверяем, является ли это датой
         if is_date_format(text):
@@ -264,8 +428,10 @@ async def handle_data_input(message: types.Message) -> bool:
 
 
 def is_date_format(text: str) -> bool:
-    """Проверяет, является ли текст датой."""
+    """Проверяет, является ли текст валидной датой."""
     import re
+    from datetime import datetime
+    
     date_patterns = [
         r'\d{1,2}\.\d{1,2}\.\d{4}',
         r'\d{1,2}/\d{1,2}/\d{4}',
@@ -275,28 +441,35 @@ def is_date_format(text: str) -> bool:
     
     for pattern in date_patterns:
         if re.match(pattern, text):
-            return True
+            # Проверяем валидность даты
+            try:
+                # Заменяем разделители на точки для парсинга
+                normalized_date = re.sub(r'[/\s-]', '.', text)
+                datetime.strptime(normalized_date, '%d.%m.%Y')
+                return True
+            except ValueError:
+                continue
     return False
 
 
 def is_name_format(text: str) -> bool:
     """Проверяет, является ли текст именем."""
-    # Простая проверка: только буквы, одно слово, длина 2-20 символов
+    # Простая проверка: только буквы, может содержать пробелы, длина 2-50 символов
     if not text or not text.strip():
         return False
     
     text = text.strip()
     
-    # Проверяем, что это одно слово (нет пробелов)
-    if ' ' in text:
+    # Проверяем, что все символы - буквы или пробелы
+    if not all(c.isalpha() or c.isspace() for c in text):
         return False
     
-    # Проверяем, что все символы - буквы
-    if not text.isalpha():
+    # Проверяем, что есть хотя бы одна буква
+    if not any(c.isalpha() for c in text):
         return False
     
-    # Проверяем длину
-    if len(text) < 2 or len(text) > 20:
+    # Проверяем длину (увеличиваем лимит для составных имен)
+    if len(text) < 2 or len(text) > 50:
         return False
     
     return True
@@ -334,11 +507,18 @@ async def validate_and_save_data(message: types.Message, name: str, birth_date: 
         await message.answer("❌ Неверный формат даты. Используйте dd.mm.yyyy, например: 20.05.1997")
         return True
     
-    # Сохраняем данные
+    # Рассчитываем аналитику
+    analytics = calculate_user_analytics(name, birth_date)
+    
+    # Сохраняем данные с аналитикой
     user_data[user_id] = {
         "name": name,
-        "birth_date": birth_date
+        "birth_date": birth_date,
+        "analytics": analytics
     }
+    
+    # Устанавливаем флаг что данные обновлены
+    data_just_updated[user_id] = True
     
     # Показываем сообщение с данными
     await show_user_data_message(message)
@@ -358,6 +538,13 @@ async def process_message(message: types.Message) -> None:
     
     # Проверяем, вводит ли пользователь данные
     if await handle_data_input(message):
+        return
+    
+    # Проверяем, были ли данные только что обновлены
+    if user_id in data_just_updated and data_just_updated[user_id]:
+        # Сбрасываем флаг
+        data_just_updated[user_id] = False
+        # Не обрабатываем сообщение как запрос к OpenAI
         return
     
     # Проверяем, есть ли у пользователя сохраненные данные
@@ -406,11 +593,14 @@ async def process_message(message: types.Message) -> None:
                 
                 # Формируем сообщение с дополнительными данными
                 user_data_info = user_data[user_id]
-                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}"
+                analytics = user_data_info.get('analytics', {})
+                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}"
             else:
                 # Обычное сообщение с основными данными
                 user_data_info = user_data[user_id]
-                enhanced_message = f"Пользователь: {user_message}\n\nДанные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}"
+                analytics = user_data_info.get('analytics', {})
+                enhanced_message = f"Пользователь: {user_message}\n\nДанные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}"
+            
             
             # Обновляем статус
             await update_status_message(status_msg, "Обрабатываю запрос через ИИ...")
@@ -471,14 +661,14 @@ async def handle_input_data(callback_query: types.CallbackQuery) -> None:
     # Отправляем статусное сообщение
     status_msg = await send_status_message(callback_query.message, "Подготавливаю форму ввода данных...")
     
-    # Удаляем предыдущее закрепленное сообщение, если есть
-    if user_id in pinned_messages:
+    # Удаляем предыдущее закрепленное сообщение с данными, если есть
+    if user_id in pinned_messages and user_id in user_data:
         try:
             await callback_query.bot.delete_message(
                 chat_id=callback_query.message.chat.id,
                 message_id=pinned_messages[user_id]
             )
-        except:
+        except Exception as e:
             pass
         del pinned_messages[user_id]
     
@@ -530,8 +720,18 @@ async def handle_update_data(callback_query: types.CallbackQuery) -> None:
     # Отправляем статусное сообщение
     status_msg = await send_status_message(callback_query.message, "Обновляю данные...")
     
-    # Очищаем дополнительные данные при обновлении основных
+    # Очищаем ВСЕ данные пользователя
+    if user_id in user_data:
+        del user_data[user_id]
     clear_additional_data(user_id)
+    
+    # Очищаем флаг обновления данных
+    if user_id in data_just_updated:
+        del data_just_updated[user_id]
+    
+    # Очищаем закрепленное сообщение
+    if user_id in pinned_messages:
+        del pinned_messages[user_id]
     
     # Удаляем статусное сообщение
     try:
@@ -540,8 +740,11 @@ async def handle_update_data(callback_query: types.CallbackQuery) -> None:
     except Exception:
         pass
     
-    # Перенаправляем на ввод данных
-    await handle_input_data(callback_query)
+    # Показываем приветствие с кнопкой ввода данных
+    await callback_query.message.answer(
+        WELCOME_MESSAGE,
+        reply_markup=data_input_keyboard,
+    )
 
 
 @router.callback_query(lambda c: c.data == "clear_additional")
@@ -654,9 +857,14 @@ async def show_user_data_message(message: types.Message) -> None:
     if user_id not in user_data:
         return
     
+    # Проверяем, что данные валидные
+    if not _has_valid_user_data(user_id):
+        return
+    
     data = user_data[user_id]
     name = data.get("name", "Не указано")
     birth_date = data.get("birth_date", "Не указано")
+    analytics = data.get("analytics", {})
     
     # Проверяем наличие дополнительных данных
     additional_count = len(additional_data.get(user_id, []))
@@ -664,7 +872,20 @@ async def show_user_data_message(message: types.Message) -> None:
     data_message = f"""✅ **Ваши данные сохранены!**
 
 👤 **Имя:** {name}
-📅 **Дата рождения:** {birth_date}"""
+📅 **Дата рождения:** {birth_date}
+
+🔢 **ВАШИ ЧИСЛА:**
+• ЧС (Число Сознания): {analytics.get('chs', 'N/A')}
+• ЧД (Число Действия): {analytics.get('chd', 'N/A')}
+• ЧИ (Число Имени): {analytics.get('name_number', 'N/A')}
+
+⚡ **МАТРИЦА ЭНЕРГИЙ:**"""
+    
+    # Добавляем матрицу энергий
+    matrix_energies = analytics.get('matrix_energies', {})
+    if matrix_energies:
+        for energy, description in sorted(matrix_energies.items()):
+            data_message += f"\n• Энергия {energy}: {description}"
     
     if additional_count > 0:
         data_message += f"\n\n📊 **Дополнительные данные для сравнения:** {additional_count} человек"

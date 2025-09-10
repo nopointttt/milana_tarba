@@ -68,3 +68,39 @@ class NameTransliteration(SQLModel, table=True):
     confirmed: bool = Field(default=False, description="Подтверждено пользователем")
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# Memory Bank models
+class Memory(SQLModel, table=True):
+    """Модель для хранения воспоминаний пользователя"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    
+    # Основные поля памяти
+    title: str = Field(description="Краткое название воспоминания")
+    content: str = Field(description="Содержимое воспоминания")
+    memory_type: str = Field(description="Тип воспоминания: personal, preference, context, etc.")
+    
+    # Метаданные
+    importance: int = Field(default=1, description="Важность от 1 до 10")
+    tags: Optional[str] = Field(default=None, description="Теги через запятую")
+    
+    # Временные метки
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_accessed: Optional[datetime] = Field(default=None, description="Последний доступ к памяти")
+    
+    # Связи
+    related_memories: Optional[str] = Field(default=None, description="ID связанных воспоминаний через запятую")
+
+
+class MemoryAccess(SQLModel, table=True):
+    """Модель для отслеживания доступа к воспоминаниям"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    memory_id: int = Field(foreign_key="memory.id", index=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    
+    access_type: str = Field(description="Тип доступа: read, create, update, delete")
+    context: Optional[str] = Field(default=None, description="Контекст доступа")
+    
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
