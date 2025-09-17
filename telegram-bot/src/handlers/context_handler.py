@@ -605,12 +605,12 @@ async def process_message(message: types.Message) -> None:
                 # Формируем сообщение с дополнительными данными
                 user_data_info = user_data[user_id]
                 analytics = user_data_info.get('analytics', {})
-                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}\nЧС: {additional_analytics.get('chs', 'N/A')}\nЧД: {additional_analytics.get('chd', 'N/A')}\nЧИ: {additional_analytics.get('name_number', 'N/A')}\nМатрица энергий: {additional_analytics.get('matrix_energies', {})}"
+                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nЛичный год: {analytics.get('personal_year', 'N/A')}\nЛичный месяц: {analytics.get('personal_month', 'N/A')}\nЛичный день: {analytics.get('personal_day', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}\nЧС: {additional_analytics.get('chs', 'N/A')}\nЧД: {additional_analytics.get('chd', 'N/A')}\nЧИ: {additional_analytics.get('name_number', 'N/A')}\nЛичный год: {additional_analytics.get('personal_year', 'N/A')}\nЛичный месяц: {additional_analytics.get('personal_month', 'N/A')}\nЛичный день: {additional_analytics.get('personal_day', 'N/A')}\nМатрица энергий: {additional_analytics.get('matrix_energies', {})}"
             else:
                 # Обычное сообщение с основными данными
                 user_data_info = user_data[user_id]
                 analytics = user_data_info.get('analytics', {})
-                enhanced_message = f"Пользователь: {user_message}\n\nДанные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}"
+                enhanced_message = f"Пользователь: {user_message}\n\nДанные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nЛичный год: {analytics.get('personal_year', 'N/A')}\nЛичный месяц: {analytics.get('personal_month', 'N/A')}\nЛичный день: {analytics.get('personal_day', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}"
             
             
             # Обновляем статус
@@ -1003,6 +1003,11 @@ async def show_user_data_message(message: types.Message) -> None:
 • ЧД (Число Действия): {analytics.get('chd', 'N/A')}
 • ЧИ (Число Имени): {analytics.get('name_number', 'N/A')}
 
+📅 **ЛИЧНЫЕ ДАТЫ:**
+• Личный год: {analytics.get('personal_year', 'N/A')}
+• Личный месяц: {analytics.get('personal_month', 'N/A')}
+• Личный день: {analytics.get('personal_day', 'N/A')}
+
 ⚡ **МАТРИЦА ЭНЕРГИЙ:**"""
     
     # Добавляем матрицу энергий
@@ -1116,6 +1121,9 @@ def calculate_user_analytics(name: str, birth_date: str) -> dict:
             'chs': calculations.get('consciousness_number'),
             'chd': calculations.get('action_number'),
             'name_number': calculations.get('name_number'),
+            'personal_year': calculations.get('personal_year'),
+            'personal_month': calculations.get('personal_month'),
+            'personal_day': calculations.get('personal_day'),
             'matrix_energies': matrix_energies,
             'matrix_digit_counts': digit_counts,
             'matrix_strong_digits': matrix_data.get('strong_digits', []),
@@ -1128,6 +1136,9 @@ def calculate_user_analytics(name: str, birth_date: str) -> dict:
             'chs': None,
             'chd': None,
             'name_number': None,
+            'personal_year': None,
+            'personal_month': None,
+            'personal_day': None,
             'matrix_energies': {},
             'matrix_digit_counts': {},
             'matrix_strong_digits': [],

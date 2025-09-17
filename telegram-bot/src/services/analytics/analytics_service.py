@@ -18,6 +18,7 @@ from .chd import calc_chd_with_exceptions
 from .matrix import Matrix
 from .name_number import calc_name_number, get_name_interpretation
 from .transliteration import normalize_name_for_calculation, is_cyrillic_text, is_latin_text
+from .personal_dates import calc_all_personal_dates
 
 
 class AnalyticsService:
@@ -68,6 +69,9 @@ class AnalyticsService:
         # 5. Интерпретация Числа Имени
         name_interpretation = get_name_interpretation(name_number)
         
+        # 6. Расчёт личных дат
+        personal_dates = calc_all_personal_dates(birth_date)
+        
         # Формируем результат
         result = {
             "input_data": {
@@ -79,7 +83,10 @@ class AnalyticsService:
             "calculations": {
                 "consciousness_number": chs,
                 "action_number": chd,
-                "name_number": name_number
+                "name_number": name_number,
+                "personal_year": personal_dates["personal_year"],
+                "personal_month": personal_dates["personal_month"],
+                "personal_day": personal_dates["personal_day"]
             },
             "matrix": {
                 "digit_counts": matrix_analysis["digit_counts"],
