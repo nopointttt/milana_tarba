@@ -17,6 +17,7 @@ from src.services.analytics.chs import calc_chs
 from src.services.analytics.chd import calc_chd
 from src.services.analytics.name_number import calc_name_number
 from src.services.analytics.matrix import build_matrix
+from src.services.analytics.analytics_service import AnalyticsService
 from datetime import datetime
 
 router = Router()
@@ -24,7 +25,7 @@ router = Router()
 # Простая клавиатура
 simple_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="❓ Помощь")]
+        [KeyboardButton(text="💬 Чат"), KeyboardButton(text="❓ Помощь")]
     ],
     resize_keyboard=True,
     one_time_keyboard=False
@@ -62,6 +63,9 @@ pinned_messages: Dict[int, int] = {}
 # Флаг что данные только что обновлены
 data_just_updated: Dict[int, bool] = {}
 
+# Режим работы пользователей (True = обезличенный режим, False = персональный режим)
+user_mode: Dict[int, bool] = {}
+
 # Приветственное сообщение
 WELCOME_MESSAGE = """🌟 ПРИВЕТ! Я ТВОЙ ЦИФРОВОЙ ПСИХОЛОГ ПО СИСТЕМЕ МИЛАНЫ ТАРБА.
 
@@ -85,12 +89,21 @@ async def on_start(message: types.Message) -> None:
     """Обработчик команды /start."""
     user_id = message.from_user.id
     
+    # Сбрасываем режим работы в персональный
+    user_mode[user_id] = False
+    
     # Очищаем контекст при новом старте
     if user_id in user_contexts:
         del user_contexts[user_id]
     
     # Инициализируем новый контекст
     user_contexts[user_id] = []
+    
+    # Устанавливаем основное меню с кнопками для всех пользователей
+    await message.answer(
+        "Выберите действие:",
+        reply_markup=simple_keyboard,
+    )
     
     # Проверяем, есть ли уже ВАЛИДНЫЕ данные пользователя
     if user_id in user_data and _has_valid_user_data(user_id):
@@ -106,6 +119,39 @@ async def on_start(message: types.Message) -> None:
             WELCOME_MESSAGE,
             reply_markup=data_input_keyboard,
         )
+
+
+@router.message(lambda message: message.text == "💬 Чат")
+async def handle_chat_button(message: types.Message) -> None:
+    """Обработчик кнопки 'Чат' из основного меню."""
+    user_id = message.from_user.id
+    
+    # Переключаем в обезличенный режим
+    user_mode[user_id] = True
+    
+    # Очищаем контекст для нового режима
+    if user_id in user_contexts:
+        del user_contexts[user_id]
+    
+    chat_mode_message = """💬 ОБЕЗЛИЧЕННЫЙ РЕЖИМ АКТИВИРОВАН
+
+Теперь я работаю как обычный чат с GPT, но с базой знаний по цифрологии Миланы Тарба.
+
+✨ Что изменилось:
+• Не требую ваши персональные данные
+• Не делаю персональные разборы
+• Отвечаю на общие вопросы о цифрологии
+• Помогаю с теорией и практиками
+
+💡 Примеры вопросов:
+• Что такое Число Сознания?
+• Как рассчитать матрицу?
+• Какие практики для энергии 7?
+• Расскажи про совместимость в цифрологии
+
+🔙 Для возврата в персональный режим нажмите /start"""
+    
+    await message.answer(chat_mode_message)
 
 
 @router.message(lambda message: message.text == "❓ Помощь")
@@ -227,57 +273,6 @@ def clear_additional_data(user_id: int) -> None:
     if user_id in additional_data:
         additional_data[user_id] = []
 
-def calculate_user_analytics(name: str, birth_date: str) -> Dict[str, Any]:
-    """Рассчитывает аналитику пользователя (ЧС, ЧД, ЧИ, матрица)."""
-    try:
-        # Парсим дату
-        date_obj = datetime.strptime(birth_date, "%d.%m.%Y")
-        
-        # Рассчитываем ЧС и ЧД
-        chs = calc_chs(date_obj)
-        chd = calc_chd(date_obj)
-        
-        # Рассчитываем ЧИ
-        name_number = calc_name_number(name)
-        
-        # Строим матрицу
-        matrix = build_matrix(date_obj)
-        
-        # Извлекаем энергии из матрицы с описаниями
-        matrix_energies = {}
-        energy_descriptions = {
-            "1": "Лидерство",
-            "2": "Дипломатия", 
-            "3": "Творчество",
-            "4": "Стабильность",
-            "5": "Свобода",
-            "6": "Гармония",
-            "7": "Мудрость",
-            "8": "Материя",
-            "9": "Завершение"
-        }
-        
-        for i in range(1, 10):
-            count = matrix.digit_counts.get(i, 0)
-            if count > 0:
-                description = energy_descriptions.get(str(i), "")
-                matrix_energies[str(i)] = f"{count} ({description})"
-        
-        
-        return {
-            "chs": chs,
-            "chd": chd,
-            "name_number": name_number,
-            "matrix_energies": matrix_energies
-        }
-    except Exception as e:
-        print(f"Ошибка при расчете аналитики: {e}")
-        return {
-            "chs": None,
-            "chd": None,
-            "name_number": None,
-            "matrix_energies": {}
-        }
 
 def _has_valid_user_data(user_id: int) -> bool:
     """Проверяет, есть ли у пользователя валидные данные (имя и дата)."""
@@ -536,6 +531,14 @@ async def process_message(message: types.Message) -> None:
     if user_id not in user_contexts:
         user_contexts[user_id] = []
     
+    # Проверяем режим работы пользователя
+    is_chat_mode = user_mode.get(user_id, False)
+    
+    # Если пользователь в обезличенном режиме, обрабатываем по-другому
+    if is_chat_mode:
+        await handle_chat_mode_message(message)
+        return
+    
     # Проверяем, вводит ли пользователь данные
     if await handle_data_input(message):
         return
@@ -587,6 +590,14 @@ async def process_message(message: types.Message) -> None:
                 
                 # Сохраняем дополнительные данные
                 additional_info = extract_additional_data(user_message)
+                
+                # Рассчитываем аналитику для дополнительных данных
+                additional_analytics = calculate_user_analytics(
+                    additional_info['name'], 
+                    additional_info['birth_date']
+                )
+                additional_info['analytics'] = additional_analytics
+                
                 if user_id not in additional_data:
                     additional_data[user_id] = []
                 additional_data[user_id].append(additional_info)
@@ -594,7 +605,7 @@ async def process_message(message: types.Message) -> None:
                 # Формируем сообщение с дополнительными данными
                 user_data_info = user_data[user_id]
                 analytics = user_data_info.get('analytics', {})
-                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}"
+                enhanced_message = f"Пользователь: {user_message}\n\nОсновные данные пользователя:\nИмя: {user_data_info['name']}\nДата рождения: {user_data_info['birth_date']}\nЧС: {analytics.get('chs', 'N/A')}\nЧД: {analytics.get('chd', 'N/A')}\nЧИ: {analytics.get('name_number', 'N/A')}\nМатрица энергий: {analytics.get('matrix_energies', {})}\n\nДополнительные данные для сравнения:\nИмя: {additional_info['name']}\nДата рождения: {additional_info['birth_date']}\nЧС: {additional_analytics.get('chs', 'N/A')}\nЧД: {additional_analytics.get('chd', 'N/A')}\nЧИ: {additional_analytics.get('name_number', 'N/A')}\nМатрица энергий: {additional_analytics.get('matrix_energies', {})}"
             else:
                 # Обычное сообщение с основными данными
                 user_data_info = user_data[user_id]
@@ -630,7 +641,7 @@ async def process_message(message: types.Message) -> None:
                 user_contexts[user_id] = user_contexts[user_id][-20:]
             
             # Отправляем ответ с Markdown форматированием
-            await message.answer(response, parse_mode="Markdown")
+            await message.answer(response)
     
     except Exception as e:
         # Отправляем индикатор печати
@@ -706,7 +717,7 @@ Ivan
                 [InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_input")]
             ]
         ),
-        parse_mode="Markdown"
+        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
     )
 
 
@@ -828,7 +839,7 @@ async def handle_help_callback(callback_query: types.CallbackQuery) -> None:
                 [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_main")]
             ]
         ),
-        parse_mode="Markdown"
+        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
     )
 
 
@@ -848,6 +859,119 @@ async def handle_back_to_main(callback_query: types.CallbackQuery) -> None:
             WELCOME_MESSAGE,
             reply_markup=data_input_keyboard,
         )
+
+
+@router.callback_query(lambda c: c.data == "chat_mode")
+async def handle_chat_mode(callback_query: types.CallbackQuery) -> None:
+    """Обработчик кнопки 'Чат' - переключение в обезличенный режим."""
+    await callback_query.answer()
+    
+    user_id = callback_query.from_user.id
+    
+    # Переключаем в обезличенный режим
+    user_mode[user_id] = True
+    
+    # Очищаем контекст для нового режима
+    if user_id in user_contexts:
+        del user_contexts[user_id]
+    
+    chat_mode_message = """💬 **ОБЕЗЛИЧЕННЫЙ РЕЖИМ АКТИВИРОВАН**
+
+Теперь я работаю как обычный чат с GPT, но с базой знаний по цифрологии Миланы Тарба.
+
+✨ **Что изменилось:**
+• Не требую ваши персональные данные
+• Не делаю персональные разборы
+• Отвечаю на общие вопросы о цифрологии
+• Помогаю с теорией и практиками
+
+💡 **Примеры вопросов:**
+• "Что такое Число Сознания?"
+• "Как рассчитать матрицу?"
+• "Какие практики для энергии 7?"
+• "Расскажи про совместимость в цифрологии"
+
+🔙 **Для возврата в персональный режим** нажмите /start"""
+    
+    await callback_query.message.edit_text(
+        chat_mode_message,
+        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
+    )
+
+
+async def handle_chat_mode_message(message: types.Message) -> None:
+    """Обработка сообщений в обезличенном режиме."""
+    user_id = message.from_user.id
+    user_message = message.text.strip()
+    
+    # Добавляем сообщение пользователя в контекст
+    user_contexts[user_id].append({
+        "role": "user",
+        "content": user_message
+    })
+    
+    try:
+        # Получаем настройки
+        settings = Settings.from_env()
+        
+        # Получаем сессию БД
+        db_manager = get_db_manager()
+        async with db_manager.get_session() as session:
+            # Создаем сервис OpenAI для обезличенного режима
+            openai_service = OpenAIContextService(
+                api_key=settings.openai_api_key,
+                db_session=session
+            )
+            
+            # Отправляем индикатор печати
+            await send_typing_status(message)
+            
+            # Отправляем статусное сообщение
+            status_msg = await send_status_message(message, "Обрабатываю ваш запрос...")
+            
+            # Обрабатываем сообщение в обезличенном режиме
+            response = await openai_service.process_chat_mode_message(
+                user_message=user_message,
+                user_id=user_id,
+                context=user_contexts[user_id]
+            )
+            
+            # Удаляем статусное сообщение
+            try:
+                if status_msg:
+                    await status_msg.delete()
+            except Exception:
+                pass
+            
+            # Добавляем ответ бота в контекст
+            user_contexts[user_id].append({
+                "role": "assistant",
+                "content": response
+            })
+            
+            # Ограничиваем контекст 20 сообщениями (10 пар)
+            if len(user_contexts[user_id]) > 20:
+                user_contexts[user_id] = user_contexts[user_id][-20:]
+            
+            # Отправляем ответ с Markdown форматированием
+            await message.answer(response)
+    
+    except Exception as e:
+        # Отправляем индикатор печати
+        await send_typing_status(message)
+        
+        # Отправляем статусное сообщение об ошибке
+        status_msg = await send_status_message(message, "Произошла ошибка, обрабатываю...")
+        
+        # Удаляем статусное сообщение
+        try:
+            if status_msg:
+                await status_msg.delete()
+        except Exception:
+            pass
+        
+        error_message = f"❌ Извините, произошла ошибка: {str(e)}"
+        await message.answer(error_message)
 
 
 async def show_user_data_message(message: types.Message) -> None:
@@ -893,18 +1017,18 @@ async def show_user_data_message(message: types.Message) -> None:
     data_message += f"""
 
 **💬 Теперь просто пишите запросы:**
-• "Дай мне прогноз на год"
-• "Расскажи про мою матрицу"
-• "Нужны практики для уверенности"
-• "Помоги с отношениями"
-• "Сравни меня с [Имя] [Дата]" - для совместимости
+• Дай мне прогноз на год
+• Расскажи про мою матрицу
+• Нужны практики для уверенности
+• Помоги с отношениями
+• Сравни меня с [Имя] [Дата] - для совместимости
 
 Я буду использовать ваши сохраненные данные для всех анализов!"""
     
     sent_message = await message.answer(
         data_message,
         reply_markup=data_management_keyboard,
-        parse_mode="Markdown"
+        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
     )
     
     # Сохраняем ID закрепленного сообщения
@@ -920,3 +1044,93 @@ def clear_user_context(user_id: int) -> None:
     """Очистить контекст пользователя."""
     if user_id in user_contexts:
         del user_contexts[user_id]
+
+
+def is_name_format(name: str) -> bool:
+    """Проверяет, что имя написано на английском языке (латиницей)."""
+    if not name or not name.strip():
+        return False
+    
+    # Убираем пробелы
+    name = name.strip()
+    
+    # Проверяем, что все символы - латинские буквы
+    return name.replace(' ', '').isalpha() and all(ord(c) < 128 for c in name)
+
+
+def is_date_format(date_str: str) -> bool:
+    """Проверяет формат даты."""
+    if not date_str or not date_str.strip():
+        return False
+    
+    # Поддерживаемые форматы
+    date_formats = ["%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y", "%d %m %Y"]
+    
+    for fmt in date_formats:
+        try:
+            from datetime import datetime
+            datetime.strptime(date_str.strip(), fmt)
+            return True
+        except ValueError:
+            continue
+    
+    return False
+
+
+def calculate_user_analytics(name: str, birth_date: str) -> dict:
+    """Рассчитывает аналитику пользователя программно."""
+    try:
+        # Создаем сервис аналитики
+        analytics_service = AnalyticsService()
+        
+        # Выполняем полный анализ
+        result = analytics_service.analyze_person(birth_date, name)
+        
+        # Извлекаем данные из правильной структуры
+        calculations = result.get('calculations', {})
+        matrix_data = result.get('matrix', {})
+        
+        # Создаем матрицу энергий с описаниями
+        matrix_energies = {}
+        energy_descriptions = {
+            "1": "Лидерство",
+            "2": "Дипломатия", 
+            "3": "Творчество",
+            "4": "Стабильность",
+            "5": "Свобода",
+            "6": "Гармония",
+            "7": "Мудрость",
+            "8": "Материя",
+            "9": "Завершение"
+        }
+        
+        digit_counts = matrix_data.get('digit_counts', {})
+        for i in range(1, 10):
+            count = digit_counts.get(i, 0)
+            if count > 0:
+                description = energy_descriptions.get(str(i), "")
+                matrix_energies[str(i)] = f"{count} ({description})"
+        
+        # Возвращаем данные в нужном формате
+        return {
+            'chs': calculations.get('consciousness_number'),
+            'chd': calculations.get('action_number'),
+            'name_number': calculations.get('name_number'),
+            'matrix_energies': matrix_energies,
+            'matrix_digit_counts': digit_counts,
+            'matrix_strong_digits': matrix_data.get('strong_digits', []),
+            'matrix_weak_digits': matrix_data.get('weak_digits', []),
+            'matrix_missing_digits': matrix_data.get('missing_digits', [])
+        }
+    except Exception as e:
+        print(f"Ошибка расчета аналитики: {e}")
+        return {
+            'chs': None,
+            'chd': None,
+            'name_number': None,
+            'matrix_energies': {},
+            'matrix_digit_counts': {},
+            'matrix_strong_digits': [],
+            'matrix_weak_digits': [],
+            'matrix_missing_digits': []
+        }
