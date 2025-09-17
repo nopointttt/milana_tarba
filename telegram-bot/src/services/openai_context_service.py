@@ -8,6 +8,8 @@ from typing import Dict, List, Any, Optional
 from openai import AsyncOpenAI
 
 from src.services.openai_functions import OpenAIFunctions
+from src.services.query_classifier import QueryClassifier
+from src.services.specialized_prompts import SpecializedPrompts
 
 
 class OpenAIContextService:
@@ -16,6 +18,7 @@ class OpenAIContextService:
     def __init__(self, api_key: str, db_session):
         self.client = AsyncOpenAI(api_key=api_key)
         self.functions = OpenAIFunctions(db_session)
+        self.classifier = QueryClassifier(api_key)
         self.system_prompt = self._get_system_prompt()
     
     def _get_system_prompt(self) -> str:
@@ -968,3 +971,35 @@ class OpenAIContextService:
 - "Для развития энергии 3 можно использовать творческие практики..."
 
 ПОМНИ: Ты помогаешь людям понять цифрологию, но не делаешь персональные разборы без их данных."""
+
+    async def process_message_with_classification(self, user_message: str, user_data: dict, user_id: int, context: List[Dict[str, Any]]) -> str:
+        """Обработка сообщения с классификацией типа запроса."""
+        try:
+            # 1. Классифицируем запрос
+            query_type = await self.classifier.classify_query(user_message)
+            
+            # 2. Получаем специализированный промпт
+            specialized_prompt = SpecializedPrompts.get_prompt_by_type(query_type, user_data)
+            
+            # 3. Формируем сообщения для OpenAI
+            messages = [{"role": "system", "content": specialized_prompt}]
+            
+            # 4. Добавляем контекст беседы (последние 10 сообщений)
+            for msg in context[-10:]:
+                messages.append({
+                    "role": msg["role"],
+                    "content": msg["content"]
+                })
+            
+            # 5. Отправляем запрос в OpenAI
+            response = await self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=2000
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            return f"❌ Извините, произошла ошибка при обработке запроса: {str(e)}"

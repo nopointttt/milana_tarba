@@ -616,9 +616,10 @@ async def process_message(message: types.Message) -> None:
             # Обновляем статус
             await update_status_message(status_msg, "Обрабатываю запрос через ИИ...")
             
-            # Обрабатываем сообщение
-            response = await openai_service.process_message(
-                user_message=enhanced_message,
+            # Обрабатываем сообщение с классификацией
+            response = await openai_service.process_message_with_classification(
+                user_message=user_message,  # Используем оригинальное сообщение для классификации
+                user_data=analytics,  # Передаем данные пользователя
                 user_id=user_id,
                 context=user_contexts[user_id]
             )
