@@ -984,14 +984,20 @@ class OpenAIContextService:
             # 3. Формируем сообщения для OpenAI
             messages = [{"role": "system", "content": specialized_prompt}]
             
-            # 4. Добавляем контекст беседы (последние 10 сообщений)
+            # 4. Добавляем текущее сообщение пользователя
+            messages.append({
+                "role": "user",
+                "content": user_message
+            })
+            
+            # 5. Добавляем контекст беседы (последние 10 сообщений)
             for msg in context[-10:]:
                 messages.append({
                     "role": msg["role"],
                     "content": msg["content"]
                 })
             
-            # 5. Отправляем запрос в OpenAI
+            # 6. Отправляем запрос в OpenAI
             response = await self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=messages,

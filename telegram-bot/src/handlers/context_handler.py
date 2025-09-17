@@ -25,7 +25,9 @@ router = Router()
 # Простая клавиатура
 simple_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="💬 Чат"), KeyboardButton(text="❓ Помощь")]
+        [KeyboardButton(text="💬 Чат"), KeyboardButton(text="❓ Помощь")],
+        [KeyboardButton(text="🔄 Обновить данные"), KeyboardButton(text="🗑️ Очистить контекст")],
+        [KeyboardButton(text="💬 Обратная связь")]
     ],
     resize_keyboard=True,
     one_time_keyboard=False
@@ -44,7 +46,9 @@ data_management_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="🔄 Обновить данные", callback_data="update_data")],
         [InlineKeyboardButton(text="🗑️ Очистить дополнительные данные", callback_data="clear_additional")],
-        [InlineKeyboardButton(text="❓ Помощь", callback_data="help")]
+        [InlineKeyboardButton(text="🗑️ Очистить контекст", callback_data="clear_context")],
+        [InlineKeyboardButton(text="❓ Помощь", callback_data="help")],
+        [InlineKeyboardButton(text="💬 Обратная связь", callback_data="feedback")]
     ]
 )
 
@@ -185,6 +189,79 @@ async def show_help(message: types.Message) -> None:
     await message.answer(help_text)
 
 
+@router.message(lambda message: message.text == "🔄 Обновить данные")
+async def handle_update_data_button(message: types.Message) -> None:
+    """Обработчик кнопки 'Обновить данные' из основного меню."""
+    user_id = message.from_user.id
+    
+    # Очищаем данные пользователя
+    if user_id in user_data:
+        del user_data[user_id]
+    
+    # Очищаем контекст
+    if user_id in user_contexts:
+        del user_contexts[user_id]
+    
+    # Сбрасываем режим
+    user_mode[user_id] = False
+    
+    update_message = """🔄 ОБНОВЛЕНИЕ ДАННЫХ
+
+Твои данные очищены! Теперь можешь ввести новые данные.
+
+📝 Введи данные в формате:
+Имя (на английском)
+Дата рождения (dd.mm.yyyy)
+
+Пример:
+Ivan
+20.05.1997
+
+Или используй кнопку ниже для пошагового ввода."""
+    
+    await message.answer(
+        update_message,
+        reply_markup=data_input_keyboard
+    )
+
+
+@router.message(lambda message: message.text == "🗑️ Очистить контекст")
+async def handle_clear_context_button(message: types.Message) -> None:
+    """Обработчик кнопки 'Очистить контекст' из основного меню."""
+    user_id = message.from_user.id
+    
+    # Очищаем контекст беседы
+    if user_id in user_contexts:
+        del user_contexts[user_id]
+    
+    # Сбрасываем режим
+    user_mode[user_id] = False
+    
+    clear_message = """🗑️ КОНТЕКСТ ОЧИЩЕН
+
+История нашего диалога очищена. Бот "забыл" предыдущие сообщения.
+
+Твои личные данные (имя и дата рождения) сохранены.
+
+Можешь продолжать общение с чистого листа! 💫"""
+    
+    await message.answer(clear_message)
+
+
+@router.message(lambda message: message.text == "💬 Обратная связь")
+async def handle_feedback_button(message: types.Message) -> None:
+    """Обработчик кнопки 'Обратная связь' из основного меню."""
+    feedback_message = """💬 ОБРАТНАЯ СВЯЗЬ
+
+Если у тебя есть вопросы, предложения или замечания по работе бота, пиши напрямую разработчику:
+
+👨‍💻 @barefootdao
+
+Мы ценим твое мнение и постоянно улучшаем бота! 🙏"""
+    
+    await message.answer(feedback_message)
+
+
 async def send_typing_status(message: types.Message) -> None:
     """Отправляет индикатор печати."""
     try:
@@ -214,9 +291,63 @@ def is_additional_data(message_text: str, user_id: int) -> bool:
         return False
     
     user_main_data = user_data[user_id]
+    message_lower = message_text.lower()
+    
+    # Проверяем ключевые слова для запросов совместимости
+    compatibility_keywords = [
+        'совместимость', 'сравни', 'сравнение', 'партнер', 'отношения с',
+        'совместим', 'подходит ли', 'подходят ли'
+    ]
+    
+    # Проверяем, есть ли ключевые слова совместимости
+    has_compatibility_keyword = any(keyword in message_lower for keyword in compatibility_keywords)
+    
+    if has_compatibility_keyword:
+        # Ищем имя и дату в тексте
+        import re
+        
+        # Паттерны для поиска даты
+        date_patterns = [
+            r'\b(\d{1,2})[.\s\-/](\d{1,2})[.\s\-/](\d{4})\b',  # 20.10.1998, 20 10 1998, 20/10/1998
+            r'\b(\d{1,2})\s+(\d{1,2})\s+(\d{4})\b',  # 20 10 1998
+        ]
+        
+        # Паттерны для поиска имени (после ключевых слов)
+        name_patterns = [
+            r'(?:совместимость|сравни|сравнение|партнер|отношения)\s+(?:с|со|между)\s+([а-яё]+?)(?:ом|ой|ей|ем|а|ы|и|о|у|ю)?\s+\d',  # "с давидом 20" -> "давид"
+            r'с\s+([а-яё]+?)(?:ом|ой|ей|ем|а|ы|и|о|у|ю)?\s+\d',  # "с давидом 20" -> "давид"
+        ]
+        
+        # Ищем дату
+        found_date = None
+        for pattern in date_patterns:
+            match = re.search(pattern, message_text)
+            if match:
+                day, month, year = match.groups()
+                found_date = f"{day.zfill(2)}.{month.zfill(2)}.{year}"
+                if is_date_format(found_date):
+                    break
+                else:
+                    found_date = None
+        
+        # Ищем имя
+        found_name = None
+        for pattern in name_patterns:
+            match = re.search(pattern, message_lower)
+            if match:
+                found_name = match.group(1).capitalize()
+                break
+        
+        # Если нашли и имя, и дату, и они отличаются от основных данных
+        if found_name and found_date:
+            if (is_additional_name_format(found_name) and is_date_format(found_date) and
+                (found_name != user_main_data.get('name') or 
+                found_date != user_main_data.get('birth_date'))):
+                return True
+    
+    # Поддержка многострочного ввода (2 строки) - старая логика
     lines = [line.strip() for line in message_text.strip().split('\n') if line.strip()]
     
-    # Поддержка многострочного ввода (2 строки)
     if len(lines) == 2:
         name, date = lines[0], lines[1]
         # Если имя или дата отличаются от основных данных пользователя
@@ -242,9 +373,63 @@ def is_additional_data(message_text: str, user_id: int) -> bool:
 
 def extract_additional_data(message_text: str) -> Dict[str, str]:
     """Извлекает дополнительные данные из сообщения."""
+    message_lower = message_text.lower()
+    
+    # Проверяем ключевые слова для запросов совместимости
+    compatibility_keywords = [
+        'совместимость', 'сравни', 'сравнение', 'партнер', 'отношения с',
+        'совместим', 'подходит ли', 'подходят ли'
+    ]
+    
+    # Проверяем, есть ли ключевые слова совместимости
+    has_compatibility_keyword = any(keyword in message_lower for keyword in compatibility_keywords)
+    
+    if has_compatibility_keyword:
+        # Ищем имя и дату в тексте
+        import re
+        
+        # Паттерны для поиска даты
+        date_patterns = [
+            r'\b(\d{1,2})[.\s\-/](\d{1,2})[.\s\-/](\d{4})\b',  # 20.10.1998, 20 10 1998, 20/10/1998
+            r'\b(\d{1,2})\s+(\d{1,2})\s+(\d{4})\b',  # 20 10 1998
+        ]
+        
+        # Паттерны для поиска имени (после ключевых слов)
+        name_patterns = [
+            r'(?:совместимость|сравни|сравнение|партнер|отношения)\s+(?:с|со|между)\s+([а-яё]+?)(?:ом|ой|ей|ем|а|ы|и|о|у|ю)?\s+\d',  # "с давидом 20" -> "давид"
+            r'с\s+([а-яё]+?)(?:ом|ой|ей|ем|а|ы|и|о|у|ю)?\s+\d',  # "с давидом 20" -> "давид"
+        ]
+        
+        # Ищем дату
+        found_date = None
+        for pattern in date_patterns:
+            match = re.search(pattern, message_text)
+            if match:
+                day, month, year = match.groups()
+                found_date = f"{day.zfill(2)}.{month.zfill(2)}.{year}"
+                if is_date_format(found_date):
+                    break
+                else:
+                    found_date = None
+        
+        # Ищем имя
+        found_name = None
+        for pattern in name_patterns:
+            match = re.search(pattern, message_lower)
+            if match:
+                found_name = match.group(1).capitalize()
+                break
+        
+        # Если нашли и имя, и дату
+        if found_name and found_date and is_additional_name_format(found_name) and is_date_format(found_date):
+            return {
+                'name': found_name,
+                'birth_date': found_date
+            }
+    
+    # Поддержка многострочного ввода (2 строки) - старая логика
     lines = [line.strip() for line in message_text.strip().split('\n') if line.strip()]
     
-    # Поддержка многострочного ввода (2 строки)
     if len(lines) == 2:
         return {
             'name': lines[0],
@@ -618,7 +803,7 @@ async def process_message(message: types.Message) -> None:
             
             # Обрабатываем сообщение с классификацией
             response = await openai_service.process_message_with_classification(
-                user_message=user_message,  # Используем оригинальное сообщение для классификации
+                user_message=enhanced_message,  # Передаем полное сообщение с данными
                 user_data=analytics,  # Передаем данные пользователя
                 user_id=user_id,
                 context=user_contexts[user_id]
@@ -900,6 +1085,61 @@ async def handle_chat_mode(callback_query: types.CallbackQuery) -> None:
     )
 
 
+@router.callback_query(lambda c: c.data == "clear_context")
+async def handle_clear_context_callback(callback_query: types.CallbackQuery) -> None:
+    """Обработчик кнопки 'Очистить контекст'."""
+    await callback_query.answer()
+    
+    user_id = callback_query.from_user.id
+    
+    # Очищаем контекст беседы
+    if user_id in user_contexts:
+        del user_contexts[user_id]
+    
+    # Сбрасываем режим
+    user_mode[user_id] = False
+    
+    clear_message = """🗑️ КОНТЕКСТ ОЧИЩЕН
+
+История нашего диалога очищена. Бот "забыл" предыдущие сообщения.
+
+Твои личные данные (имя и дата рождения) сохранены.
+
+Можешь продолжать общение с чистого листа! 💫"""
+    
+    await callback_query.message.edit_text(
+        clear_message,
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_main")]
+            ]
+        )
+    )
+
+
+@router.callback_query(lambda c: c.data == "feedback")
+async def handle_feedback_callback(callback_query: types.CallbackQuery) -> None:
+    """Обработчик кнопки 'Обратная связь'."""
+    await callback_query.answer()
+    
+    feedback_message = """💬 ОБРАТНАЯ СВЯЗЬ
+
+Если у тебя есть вопросы, предложения или замечания по работе бота, пиши напрямую разработчику:
+
+👨‍💻 @barefootdao
+
+Мы ценим твое мнение и постоянно улучшаем бота! 🙏"""
+    
+    await callback_query.message.edit_text(
+        feedback_message,
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_main")]
+            ]
+        )
+    )
+
+
 async def handle_chat_mode_message(message: types.Message) -> None:
     """Обработка сообщений в обезличенном режиме."""
     user_id = message.from_user.id
@@ -1062,6 +1302,17 @@ def is_name_format(name: str) -> bool:
     
     # Проверяем, что все символы - латинские буквы
     return name.replace(' ', '').isalpha() and all(ord(c) < 128 for c in name)
+
+def is_additional_name_format(name: str) -> bool:
+    """Проверяет, что имя подходит для дополнительных данных (может быть на любом языке)."""
+    if not name or not name.strip():
+        return False
+    
+    # Убираем пробелы
+    name = name.strip()
+    
+    # Проверяем, что все символы - буквы (любого алфавита)
+    return name.replace(' ', '').isalpha()
 
 
 def is_date_format(date_str: str) -> bool:
