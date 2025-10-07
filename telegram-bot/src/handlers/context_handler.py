@@ -5,10 +5,12 @@ from __future__ import annotations
 
 import json
 from typing import Dict, List, Any
-from aiogram import Router, types
-from aiogram.filters import CommandStart
+from aiogram import Router, types, F
+from aiogram.filters import CommandStart, Command
+from src.utils.modes import Mode, MARKETING_WELCOME, SALES_WELCOME, prefix_with_mode
+from src.utils.assistant import send_with_assistant
 from aiogram.filters.callback_data import CallbackData
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
 
 from src.services.openai_context_service import OpenAIContextService
 from src.config import Settings
@@ -22,22 +24,24 @@ from datetime import datetime
 
 router = Router()
 
-# Простая клавиатура
-simple_keyboard = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="💬 Чат"), KeyboardButton(text="❓ Помощь")],
-        [KeyboardButton(text="🔄 Обновить данные"), KeyboardButton(text="🗑️ Очистить контекст")],
-        [KeyboardButton(text="💬 Обратная связь")]
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=False
-)
+# Режимы пользователя: personal | chat | marketing | sales
+user_active_mode: Dict[int, str] = {}
+
+@router.message(Command("marketing"))
+async def set_mode_marketing(message: types.Message) -> None:
+    user_active_mode[message.from_user.id] = Mode.marketing.value
+    await message.answer(MARKETING_WELCOME)
+
+@router.message(Command("sales"))
+async def set_mode_sales(message: types.Message) -> None:
+    user_active_mode[message.from_user.id] = Mode.sales.value
+    await message.answer(SALES_WELCOME)
 
 # Кнопки для ввода данных
 data_input_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="📝 Ввести данные", callback_data="input_data")],
-        [InlineKeyboardButton(text="❓ Помощь", callback_data="help")]
+        [InlineKeyboardButton(text="ℹ️ О боте", callback_data="about")]
     ]
 )
 
@@ -47,8 +51,8 @@ data_management_keyboard = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="🔄 Обновить данные", callback_data="update_data")],
         [InlineKeyboardButton(text="🗑️ Очистить дополнительные данные", callback_data="clear_additional")],
         [InlineKeyboardButton(text="🗑️ Очистить контекст", callback_data="clear_context")],
-        [InlineKeyboardButton(text="❓ Помощь", callback_data="help")],
-        [InlineKeyboardButton(text="💬 Обратная связь", callback_data="feedback")]
+        [InlineKeyboardButton(text="ℹ️ О боте", callback_data="about")],
+        [InlineKeyboardButton(text="🆘 Служба заботы", callback_data="support")]
     ]
 )
 
@@ -71,21 +75,28 @@ data_just_updated: Dict[int, bool] = {}
 user_mode: Dict[int, bool] = {}
 
 # Приветственное сообщение
-WELCOME_MESSAGE = """🌟 ПРИВЕТ! Я ТВОЙ ЦИФРОВОЙ ПСИХОЛОГ ПО СИСТЕМЕ МИЛАНЫ ТАРБА.
+WELCOME_MESSAGE = """✨ ВВЕДИТЕ ВАШИ ДАННЫЕ
 
-Я помогу тебе понять себя через анализ твоей даты рождения и имени. 
+Имя (только на английском):
+Примеры: Olga, Maria, Ksenia 
 
-🔮 ЧТО Я УМЕЮ:
-• Рассчитывать ЧС, ЧД, Матрицу, Число Имени
-• Давать персональные рекомендации и прогнозы
-• Подбирать практики под твои запросы
-• Анализировать совместимость и предназначение
+Дата рождения:
+Формат: dd.mm.yyyy
+Пример: 20.05.1997
 
-📝 ДЛЯ НАЧАЛА МНЕ НУЖНЫ ТВОИ ДАННЫЕ:
-• Имя (только на английском, например: Ivan)
-• Дата рождения (dd.mm.yyyy)
+💡 СПОСОБЫ ВВОДА:
 
-После ввода данных ты сможешь просто писать запросы, и я буду использовать твои сохраненные данные!"""
+Вариант 1 - В одном сообщении:
+Ivan
+20.05.1997
+
+Вариант 2 - По отдельности:
+• Сначала имя
+• Потом дату рождения
+
+⚠️ ВАЖНО:
+• Имя только латиницей (английскими буквами)
+• Дата строго в формате dd.mm.yyyy"""
 
 
 @router.message(CommandStart())
@@ -103,12 +114,6 @@ async def on_start(message: types.Message) -> None:
     # Инициализируем новый контекст
     user_contexts[user_id] = []
     
-    # Устанавливаем основное меню с кнопками для всех пользователей
-    await message.answer(
-        "Выберите действие:",
-        reply_markup=simple_keyboard,
-    )
-    
     # Проверяем, есть ли уже ВАЛИДНЫЕ данные пользователя
     if user_id in user_data and _has_valid_user_data(user_id):
         # Показываем закрепленное сообщение с данными
@@ -121,80 +126,61 @@ async def on_start(message: types.Message) -> None:
         # Показываем приветствие с кнопкой ввода данных
         await message.answer(
             WELCOME_MESSAGE,
-            reply_markup=data_input_keyboard,
+            parse_mode="Markdown"
         )
 
 
-@router.message(lambda message: message.text == "💬 Чат")
-async def handle_chat_button(message: types.Message) -> None:
-    """Обработчик кнопки 'Чат' из основного меню."""
+@router.message(Command("menu"))
+async def handle_menu_command(message: types.Message) -> None:
+    """Обработчик команды /menu."""
+    user_id = message.from_user.id
+    
+    # Показываем главное меню с командами
+    menu_text = """📋 **ГЛАВНОЕ МЕНЮ**
+
+🤖 **Доступные команды:**
+
+🏠 `/start` - Начать работу с ботом
+📋 `/menu` - Показать это меню
+💬 `/chat` - Задать вопрос без даты рождения
+🔄 `/update` - Ввести новую дату рождения
+🗑️ `/clear` - Очистить историю
+ℹ️ `/about` - О боте
+🆘 `/support` - Служба заботы
+
+💡 **Быстрые действия:**
+• Просто напишите вопрос - получите ответ
+• Для персонального анализа нужны ваши данные
+• Используйте /chat для общих вопросов
+
+📞 **Нужна помощь?** Используйте /support"""
+
+    await message.answer(menu_text, parse_mode="Markdown")
+
+
+@router.message(Command("chat"))
+async def handle_chat_command(message: types.Message) -> None:
+    """Обработчик команды /chat."""
     user_id = message.from_user.id
     
     # Переключаем в обезличенный режим
     user_mode[user_id] = True
     
-    # Очищаем контекст для нового режима
-    if user_id in user_contexts:
-        del user_contexts[user_id]
-    
-    chat_mode_message = """💬 ОБЕЗЛИЧЕННЫЙ РЕЖИМ АКТИВИРОВАН
-
-Теперь я работаю как обычный чат с GPT, но с базой знаний по цифрологии Миланы Тарба.
-
-✨ Что изменилось:
-• Не требую ваши персональные данные
-• Не делаю персональные разборы
-• Отвечаю на общие вопросы о цифрологии
-• Помогаю с теорией и практиками
-
-💡 Примеры вопросов:
-• Что такое Число Сознания?
-• Как рассчитать матрицу?
-• Какие практики для энергии 7?
-• Расскажи про совместимость в цифрологии
-
-🔙 Для возврата в персональный режим нажмите /start"""
-    
-    await message.answer(chat_mode_message)
+    await message.answer(
+        "💬 **Включен режим чата**\n\n"
+        "Теперь вы можете общаться со мной без использования ваших персональных данных. "
+        "Я буду отвечать на общие вопросы о цифрологии.\n\n"
+        "Для возврата к персональному режиму используйте /start",
+        parse_mode="Markdown"
+    )
 
 
-@router.message(lambda message: message.text == "❓ Помощь")
-async def show_help(message: types.Message) -> None:
-    """Показать справку."""
-    help_text = """📖 СПРАВКА
-
-💬 КАК ОБЩАТЬСЯ:
-Просто пиши мне естественно, как другу. Я понимаю твои вопросы и запросы.
-
-📅 ФОРМАТ ДАТЫ РОЖДЕНИЯ:
-• Обязательно: dd.mm.yyyy
-• Примеры: 15.03.1990, 01.01.2000
-
-👤 ФОРМАТ ИМЕНИ:
-• Только на английском языке: Ivan
-• Только имя (без фамилии)
-• Примеры: John, Maria, Alex, Anna, Michael
-
-🔮 ЧТО ОЗНАЧАЮТ ЧИСЛА:
-• ЧС - чего хочет твоя душа (только день рождения)
-• ЧД - как ты действуешь после 33 лет (вся дата рождения)
-• Число Имени - энергия твоего имени
-• Матрица - какие энергии в тебе заложены
-
-✨ ПРАКТИКИ:
-Я подберу персональные практики под любой твой запрос.
-
-Все расчеты основаны на «Книге Знаний по Цифрологии» системы Миланы Тарба."""
-    
-    await message.answer(help_text)
-
-
-@router.message(lambda message: message.text == "🔄 Обновить данные")
-async def handle_update_data_button(message: types.Message) -> None:
-    """Обработчик кнопки 'Обновить данные' из основного меню."""
+@router.message(Command("update"))
+async def handle_update_command(message: types.Message) -> None:
+    """Обработчик команды /update."""
     user_id = message.from_user.id
     
-    # Очищаем данные пользователя
+    # Очищаем старые данные пользователя
     if user_id in user_data:
         del user_data[user_id]
     
@@ -202,64 +188,98 @@ async def handle_update_data_button(message: types.Message) -> None:
     if user_id in user_contexts:
         del user_contexts[user_id]
     
-    # Сбрасываем режим
-    user_mode[user_id] = False
+    # Очищаем флаги
+    if user_id in data_just_updated:
+        del data_just_updated[user_id]
     
-    update_message = """🔄 ОБНОВЛЕНИЕ ДАННЫХ
-
-Твои данные очищены! Теперь можешь ввести новые данные.
-
-📝 Введи данные в формате:
-Имя (на английском)
-Дата рождения (dd.mm.yyyy)
-
-Пример:
-Ivan
-20.05.1997
-
-Или используй кнопку ниже для пошагового ввода."""
-    
+    # Показываем сообщение о начале обновления
     await message.answer(
-        update_message,
-        reply_markup=data_input_keyboard
+        "🔄 **ОБНОВЛЕНИЕ ДАННЫХ**\n\n"
+        "Сейчас введете новые данные пошагово.\n\n"
+        "👤 **Шаг 1:** Введите ваше имя\n"
+        "• Только английскими буквами (латиница)\n"
+        "• Примеры: Ivan, Maria, John, Anna\n\n"
+        "💡 **Затем** введите дату рождения:",
+        parse_mode="Markdown"
     )
 
 
-@router.message(lambda message: message.text == "🗑️ Очистить контекст")
-async def handle_clear_context_button(message: types.Message) -> None:
-    """Обработчик кнопки 'Очистить контекст' из основного меню."""
+@router.message(Command("clear"))
+async def handle_clear_command(message: types.Message) -> None:
+    """Обработчик команды /clear."""
     user_id = message.from_user.id
     
-    # Очищаем контекст беседы
+    # Очищаем все данные пользователя
     if user_id in user_contexts:
         del user_contexts[user_id]
+    if user_id in user_data:
+        del user_data[user_id]
+    if user_id in additional_data:
+        del additional_data[user_id]
+    if user_id in data_just_updated:
+        del data_just_updated[user_id]
+    if user_id in pinned_messages:
+        del pinned_messages[user_id]
     
-    # Сбрасываем режим
-    user_mode[user_id] = False
-    
-    clear_message = """🗑️ КОНТЕКСТ ОЧИЩЕН
-
-История нашего диалога очищена. Бот "забыл" предыдущие сообщения.
-
-Твои личные данные (имя и дата рождения) сохранены.
-
-Можешь продолжать общение с чистого листа! 💫"""
-    
-    await message.answer(clear_message)
+    await message.answer(
+        "🗑️ **ВСЕ ДАННЫЕ ОЧИЩЕНЫ**\n\n"
+        "Все ваши данные и история общения удалены.\n"
+        "Используйте /start для начала работы.",
+        parse_mode="Markdown"
+    )
 
 
-@router.message(lambda message: message.text == "💬 Обратная связь")
-async def handle_feedback_button(message: types.Message) -> None:
-    """Обработчик кнопки 'Обратная связь' из основного меню."""
-    feedback_message = """💬 ОБРАТНАЯ СВЯЗЬ
+@router.message(Command("about"))
+async def handle_about_command(message: types.Message) -> None:
+    """Обработчик команды /about."""
+    about_text = """ℹ️ **О БОТЕ**
 
-Если у тебя есть вопросы, предложения или замечания по работе бота, пиши напрямую разработчику:
+🤖 **Цифровой Психолог по системе Миланы Тарба**
 
-👨‍💻 @barefootdao
+Я — ваш персональный цифровой психолог. Помогаю понять себя через анализ даты рождения и имени по системе Миланы Тарба.
 
-Мы ценим твое мнение и постоянно улучшаем бота! 🙏"""
-    
-    await message.answer(feedback_message)
+🔮 **Что я умею:**
+• Рассчитывать ЧС (Число Сознания)
+• Вычислять ЧД (Число Действия)
+• Анализировать ЧИ (Число Имени)
+• Строить Матрицу Энергий
+• Рассчитывать личные даты (год, месяц, день)
+• Анализировать совместимость
+
+✨ **Новые возможности:**
+• Источники восстановления энергии по ЧС
+• Лайфхаки общения в отношениях по ЧС
+• Триггеры и раздражители по ЧС
+• Карма и Дхарма: расчет и интерпретация
+• Трансформация сознания: этапы и практики
+• Видео‑практики из расшифровок лекций (поиск и выдача)
+
+🎯 **Как это работает:**
+1. Введите имя (английскими буквами)
+2. Укажите дату рождения
+3. Задавайте вопросы — получайте персональные ответы
+
+💫 **Система Миланы Тарба** помогает раскрыть потенциал и найти гармонию.
+
+Начните с команды /start! 🌟"""
+
+    await message.answer(about_text, parse_mode="Markdown")
+
+
+@router.message(Command("support"))
+async def handle_support_command(message: types.Message) -> None:
+    """Обработчик команды /support."""
+    await message.answer(
+        "🆘 **СЛУЖБА ЗАБОТЫ**\n\n"
+        "Если у вас есть вопросы, предложения или нужна помощь, "
+        "обращайтесь к нашей службе заботы!\n\n"
+        "📞 **Контакты для связи:**\n"
+        "• Telegram: [Написать](https://t.me/zabota_TarbaMilanabot?start=start)\n\n"
+        "Мы всегда готовы помочь и ответить на ваши вопросы! 💫",
+        parse_mode="Markdown"
+    )
+
+
 
 
 async def send_typing_status(message: types.Message) -> None:
@@ -491,9 +511,13 @@ async def handle_data_input(message: types.Message) -> bool:
     user_id = message.from_user.id
     user_message = message.text.strip()
     
-    # Очищаем невалидные данные, если они есть
-    if user_id in user_data and not _has_valid_user_data(user_id):
-        del user_data[user_id]
+    # Очищаем некорректные данные ТОЛЬКО если уже введены оба поля и хотя бы одно из них невалидно
+    if user_id in user_data:
+        _data_chk = user_data[user_id]
+        _name_chk = _data_chk.get("name", "").strip()
+        _date_chk = _data_chk.get("birth_date", "").strip()
+        if _name_chk and _date_chk and (not is_name_format(_name_chk) or not is_date_format(_date_chk)):
+            del user_data[user_id]
     
     # Если у пользователя уже есть ВАЛИДНЫЕ данные, не обрабатываем как ввод данных
     if user_id in user_data and _has_valid_user_data(user_id):
@@ -538,8 +562,46 @@ async def handle_data_input(message: types.Message) -> bool:
         parts = text.split()
         if len(parts) >= 2:
             # Пробуем разные варианты парсинга
+            # Вариант 1: "Имя Дата" - ищем дату в конце
+            # Проверяем последние 3 части как дату (день месяц год)
+            if len(parts) >= 4:
+                # Пробуем последние 3 части как дату
+                date_parts = parts[-3:]
+                date = ' '.join(date_parts)
+                name = ' '.join(parts[:-3])
+                
+                if is_name_format(name) and is_date_format(date):
+                    # Это комбинированный ввод "Имя Дата"
+                    if await validate_and_save_data(message, name, date):
+                        # Удаляем статусное сообщение
+                        try:
+                            if status_msg:
+                                await status_msg.delete()
+                        except Exception:
+                            pass
+                        return True
+            
+            # Вариант 2: "Дата Имя" - ищем дату в начале
+            # Проверяем первые 3 части как дату (день месяц год)
+            if len(parts) >= 4:
+                date_parts = parts[:3]
+                date = ' '.join(date_parts)
+                name = ' '.join(parts[3:])
+                
+                if is_date_format(date) and is_name_format(name):
+                    # Это комбинированный ввод "Дата Имя"
+                    if await validate_and_save_data(message, name, date):
+                        # Удаляем статусное сообщение
+                        try:
+                            if status_msg:
+                                await status_msg.delete()
+                        except Exception:
+                            pass
+                        return True
+            
+            # Вариант 3: Старый способ для совместимости
             for i in range(len(parts)):
-                # Вариант 1: "Имя Дата" - берем последнюю часть как дату
+                # Вариант 3.1: "Имя Дата" - берем последнюю часть как дату
                 date = parts[-1]
                 name = ' '.join(parts[:-1])
                 if is_name_format(name) and is_date_format(date):
@@ -554,7 +616,7 @@ async def handle_data_input(message: types.Message) -> bool:
                         return True
                     break
                 
-                # Вариант 2: "Дата Имя" - берем первую часть как дату
+                # Вариант 3.2: "Дата Имя" - берем первую часть как дату
                 if i == 0:  # Проверяем только один раз
                     date = parts[0]
                     name = ' '.join(parts[1:])
@@ -584,7 +646,30 @@ async def handle_data_input(message: types.Message) -> bool:
             except Exception:
                 pass
             
-            await message.answer("✅ Дата рождения сохранена! Теперь введите ваше имя (только на английском):")
+            # Если имя уже введено ранее — завершаем сбор данных
+            if "name" in user_data[user_id] and user_data[user_id]["name"]:
+                # Рассчитываем аналитику при раздельном вводе
+                try:
+                    _name = user_data[user_id]["name"].strip()
+                    _date = user_data[user_id]["birth_date"].strip()
+                    # Нормализуем дату перед расчетом
+                    _date = normalize_date_format(_date)
+                    user_data[user_id]["birth_date"] = _date  # Сохраняем нормализованную дату
+                    print(f"🔍 DEBUG: Вызываем calculate_user_analytics из ввода даты после имени: name='{_name}', date='{_date}'")
+                    user_data[user_id]["analytics"] = calculate_user_analytics(_name, _date)
+                except Exception as e:
+                    print(f"❌ Ошибка в вводе даты после имени: {e}")
+                    import traceback
+                    print(f"❌ Трейсбэк ввода даты: {traceback.format_exc()}")
+                    # Устанавливаем пустую аналитику при ошибке
+                    user_data[user_id]["analytics"] = {
+                        'chs': None, 'chd': None, 'name_number': None,
+                        'personal_year': None, 'personal_month': None, 'personal_day': None,
+                        'matrix_energies': {}
+                    }
+                await show_user_data_message(message)
+            else:
+                await show_user_data_message(message) if ("name" in user_data[user_id] and user_data[user_id]["name"]) else await message.answer("✅ Дата рождения сохранена! Теперь введите ваше имя (только на английском):")
             return True
         
         # Проверяем, является ли это именем
@@ -601,58 +686,50 @@ async def handle_data_input(message: types.Message) -> bool:
             except Exception:
                 pass
             
-            await message.answer("✅ Имя сохранено! Теперь введите дату рождения (dd.mm.yyyy):")
+            # Если дата уже введена ранее — завершаем сбор данных
+            if "birth_date" in user_data[user_id] and user_data[user_id]["birth_date"]:
+                # Рассчитываем аналитику при раздельном вводе
+                try:
+                    _name = user_data[user_id]["name"].strip()
+                    _date = user_data[user_id]["birth_date"].strip()
+                    # Нормализуем дату перед расчетом
+                    _date = normalize_date_format(_date)
+                    user_data[user_id]["birth_date"] = _date  # Сохраняем нормализованную дату
+                    print(f"🔍 DEBUG: Вызываем calculate_user_analytics из раздельного ввода: name='{_name}', date='{_date}'")
+                    user_data[user_id]["analytics"] = calculate_user_analytics(_name, _date)
+                except Exception as e:
+                    print(f"❌ Ошибка в раздельном вводе аналитики: {e}")
+                    import traceback
+                    print(f"❌ Трейсбэк раздельного ввода: {traceback.format_exc()}")
+                    # Устанавливаем пустую аналитику при ошибке
+                    user_data[user_id]["analytics"] = {
+                        'chs': None, 'chd': None, 'name_number': None,
+                        'personal_year': None, 'personal_month': None, 'personal_day': None,
+                        'matrix_energies': {}
+                    }
+                await show_user_data_message(message)
+            else:
+                await message.answer("✅ Имя сохранено! Теперь введите дату рождения (dd.mm.yyyy):")
+            return True
+        
+        # Если ничего не распознано, показываем подсказку
+        else:
+            # Удаляем статусное сообщение
+            try:
+                if status_msg:
+                    await status_msg.delete()
+            except Exception:
+                pass
+            
+            await message.answer(
+                "❌ Не распознал данные.\n\n" \
+                "Укажите имя латиницей и дату рождения в формате dd.mm.yyyy.\n" \
+                "Пример: Ivan 20.05.1997",
+                parse_mode="Markdown"
+            )
             return True
     
     return False
-
-
-def is_date_format(text: str) -> bool:
-    """Проверяет, является ли текст валидной датой."""
-    import re
-    from datetime import datetime
-    
-    date_patterns = [
-        r'\d{1,2}\.\d{1,2}\.\d{4}',
-        r'\d{1,2}/\d{1,2}/\d{4}',
-        r'\d{1,2}-\d{1,2}-\d{4}',
-        r'\d{1,2}\s+\d{1,2}\s+\d{4}'
-    ]
-    
-    for pattern in date_patterns:
-        if re.match(pattern, text):
-            # Проверяем валидность даты
-            try:
-                # Заменяем разделители на точки для парсинга
-                normalized_date = re.sub(r'[/\s-]', '.', text)
-                datetime.strptime(normalized_date, '%d.%m.%Y')
-                return True
-            except ValueError:
-                continue
-    return False
-
-
-def is_name_format(text: str) -> bool:
-    """Проверяет, является ли текст именем."""
-    # Простая проверка: только буквы, может содержать пробелы, длина 2-50 символов
-    if not text or not text.strip():
-        return False
-    
-    text = text.strip()
-    
-    # Проверяем, что все символы - буквы или пробелы
-    if not all(c.isalpha() or c.isspace() for c in text):
-        return False
-    
-    # Проверяем, что есть хотя бы одна буква
-    if not any(c.isalpha() for c in text):
-        return False
-    
-    # Проверяем длину (увеличиваем лимит для составных имен)
-    if len(text) < 2 or len(text) > 50:
-        return False
-    
-    return True
 
 
 async def validate_and_save_data(message: types.Message, name: str, birth_date: str) -> bool:
@@ -661,30 +738,47 @@ async def validate_and_save_data(message: types.Message, name: str, birth_date: 
     
     # Валидируем имя
     if not is_name_format(name):
-        await message.answer("❌ Имя должно быть только на английском языке, одно слово. Например: Ivan")
+        await message.answer(
+            "❌ **Неверный формат имени!**\n\n"
+            "👤 **Требования к имени:**\n"
+            "• Только английские буквы (латиница)\n"
+            "• Одно слово или несколько слов\n"
+            "• Примеры: Ivan, Maria, John, Anna\n\n"
+            "💡 **Попробуйте еще раз:**\n"
+            "```\nIvan\n20.05.1997\n```",
+            parse_mode="Markdown"
+        )
         return True
     
     # Валидируем дату
     if not is_date_format(birth_date):
-        await message.answer("❌ Неверный формат даты. Используйте dd.mm.yyyy, например: 20.05.1997")
+        await message.answer(
+            "❌ **Неверный формат даты!**\n\n"
+            "📅 **Поддерживаемые форматы:**\n"
+            "• 20.05.1997\n"
+            "• 20/05/1997\n"
+            "• 20-05-1997\n"
+            "• 20 05 1997\n\n"
+            "💡 **Попробуйте еще раз:**\n"
+            "```\nIvan\n20.05.1997\n```",
+            parse_mode="Markdown"
+        )
         return True
     
     # Нормализуем дату
     try:
-        from datetime import datetime
-        date_formats = ["%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y", "%d %m %Y"]
-        
-        for fmt in date_formats:
-            try:
-                d = datetime.strptime(birth_date, fmt)
-                birth_date = d.strftime("%d.%m.%Y")
-                break
-            except ValueError:
-                continue
-        else:
-            raise ValueError("Неподдерживаемый формат даты")
+        birth_date = normalize_date_format(birth_date)
     except ValueError:
-        await message.answer("❌ Неверный формат даты. Используйте dd.mm.yyyy, например: 20.05.1997")
+        await message.answer(
+            "❌ **Ошибка при обработке даты!**\n\n"
+            "📅 **Проверьте правильность даты:**\n"
+            "• День: 1-31\n"
+            "• Месяц: 1-12\n"
+            "• Год: 1900-2100\n\n"
+            "💡 **Попробуйте еще раз:**\n"
+            "```\nIvan\n20.05.1997\n```",
+            parse_mode="Markdown"
+        )
         return True
     
     # Рассчитываем аналитику
@@ -716,12 +810,18 @@ async def process_message(message: types.Message) -> None:
     if user_id not in user_contexts:
         user_contexts[user_id] = []
     
-    # Проверяем режим работы пользователя
+    # Проверяем режимы
     is_chat_mode = user_mode.get(user_id, False)
+    active_mode = user_active_mode.get(user_id, None)
     
-    # Если пользователь в обезличенном режиме, обрабатываем по-другому
+    # Обезличенный режим
     if is_chat_mode:
         await handle_chat_mode_message(message)
+        return
+    
+    # Режимы marketing/sales работают без персональных данных
+    if active_mode in (Mode.marketing.value, Mode.sales.value):
+        await handle_mode_message(message, Mode(active_mode))
         return
     
     # Проверяем, вводит ли пользователь данные
@@ -730,10 +830,11 @@ async def process_message(message: types.Message) -> None:
     
     # Проверяем, были ли данные только что обновлены
     if user_id in data_just_updated and data_just_updated[user_id]:
+        print(f"🔍 DEBUG: Данные только что обновлены для пользователя {user_id}, сбрасываем флаг")
         # Сбрасываем флаг
         data_just_updated[user_id] = False
-        # Не обрабатываем сообщение как запрос к OpenAI
-        return
+        # НЕ блокируем обработку сообщения - пользователь может сразу задать вопрос
+        print(f"🔍 DEBUG: Продолжаем обработку сообщения после обновления данных")
     
     # Проверяем, есть ли у пользователя сохраненные данные
     if user_id not in user_data:
@@ -744,9 +845,10 @@ async def process_message(message: types.Message) -> None:
         return
     
     # Добавляем сообщение пользователя в контекст
+    prefixed_content = prefix_with_mode(user_message, Mode(active_mode)) if active_mode else user_message
     user_contexts[user_id].append({
         "role": "user",
-        "content": user_message
+        "content": prefixed_content
     })
     
     try:
@@ -802,12 +904,16 @@ async def process_message(message: types.Message) -> None:
             await update_status_message(status_msg, "Обрабатываю запрос через ИИ...")
             
             # Обрабатываем сообщение с классификацией
+            print(f"🔍 DEBUG: Вызываем process_message_with_classification для сообщения: {user_message}")
+            print(f"🔍 DEBUG: Пользователь {user_id}, есть ли данные: {user_id in user_data}")
             response = await openai_service.process_message_with_classification(
                 user_message=enhanced_message,  # Передаем полное сообщение с данными
                 user_data=analytics,  # Передаем данные пользователя
                 user_id=user_id,
                 context=user_contexts[user_id]
             )
+            print(f"🔍 DEBUG: Получили ответ длиной {len(response)} символов")
+            print(f"🔍 DEBUG: Отправляем в Telegram: {repr(response[:200])}")
             
             # Удаляем статусное сообщение
             try:
@@ -827,7 +933,7 @@ async def process_message(message: types.Message) -> None:
                 user_contexts[user_id] = user_contexts[user_id][-20:]
             
             # Отправляем ответ с Markdown форматированием
-            await message.answer(response)
+            await message.answer(response, parse_mode="Markdown")
     
     except Exception as e:
         # Отправляем индикатор печати
@@ -877,24 +983,30 @@ async def handle_input_data(callback_query: types.CallbackQuery) -> None:
         pass
     
     # Отправляем инструкции по вводу данных
-    instruction_message = """📝 **Введите ваши данные:**
+    instruction_message = """✨ ВВЕДИТЕ ВАШИ ДАННЫЕ
 
-**1. Имя (только на английском):**
-Например: Ivan, Maria, John
+👤 1. Имя (только на английском):
+Примеры: Ivan, Maria, John, Michael
 
-**2. Дата рождения:**
+📅 2. Дата рождения:
 Формат: dd.mm.yyyy
-Например: 20.05.1997
+Примеры: 20.05.1997, 01.01.1990
 
-**Отправьте данные в одном сообщении:**
-```
+
+💡 СПОСОБЫ ВВОДА:
+
+**Вариант 1 - В одном сообщении:**
 Ivan
 20.05.1997
-```
 
-Или по отдельности:
+**Вариант 2 - По отдельности:**
 • Сначала имя
-• Потом дату рождения"""
+• Потом дату рождения
+
+⚠️ ВАЖНО:
+• Имя только латиницей (английскими буквами)
+• Дата строго в формате dd.mm.yyyy
+• Можно использовать пробелы в дате: 20 05 1997"""
     
     await callback_query.message.edit_text(
         instruction_message,
@@ -903,7 +1015,7 @@ Ivan
                 [InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_input")]
             ]
         ),
-        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
+        parse_mode="Markdown"
     )
 
 
@@ -941,6 +1053,7 @@ async def handle_update_data(callback_query: types.CallbackQuery) -> None:
     await callback_query.message.answer(
         WELCOME_MESSAGE,
         reply_markup=data_input_keyboard,
+        parse_mode="Markdown"
     )
 
 
@@ -982,50 +1095,54 @@ async def handle_cancel_input(callback_query: types.CallbackQuery) -> None:
         await callback_query.message.edit_text(
             WELCOME_MESSAGE,
             reply_markup=data_input_keyboard,
+            parse_mode="Markdown"
         )
 
 
-@router.callback_query(lambda c: c.data == "help")
-async def handle_help_callback(callback_query: types.CallbackQuery) -> None:
-    """Обработчик кнопки 'Помощь'."""
+@router.callback_query(lambda c: c.data == "about")
+async def handle_about_callback(callback_query: types.CallbackQuery) -> None:
+    """Обработчик кнопки 'О боте'."""
     await callback_query.answer()
     
-    help_text = """📖 **СПРАВКА**
+    about_text = """ℹ️ **О БОТЕ**
 
-**💬 Как общаться:**
-Просто пиши мне естественно, как другу. Я понимаю твои вопросы и запросы.
+🤖 **Цифровой Психолог по системе Миланы Тарба**
 
-**📅 Формат даты рождения:**
-• Обязательно: dd.mm.yyyy
-• Примеры: 15.03.1990, 01.01.2000
+Я — ваш персональный цифровой психолог. Помогаю понять себя через анализ даты рождения и имени по системе Миланы Тарба.
 
-**👤 Формат имени:**
-• Только на английском языке
-• Одно слово (без фамилии)
-• Примеры: Ivan, Maria, John
+🔮 **Что я умею:**
+• Рассчитывать ЧС (Число Сознания)
+• Вычислять ЧД (Число Действия)
+• Анализировать ЧИ (Число Имени)
+• Строить Матрицу Энергий
+• Рассчитывать личные даты (год, месяц, день)
+• Анализировать совместимость
 
-**🔮 Что я умею:**
-• Анализ по дате рождения и имени
-• Прогнозы на год/месяц/день
-• Анализ совместимости
-• Советы по реализации
-• Подбор персональных практик
+✨ **Новые возможности:**
+• Источники восстановления энергии по ЧС
+• Лайфхаки общения в отношениях по ЧС
+• Триггеры и раздражители по ЧС
+• Карма и Дхарма: расчет и интерпретация
+• Трансформация сознания: этапы и практики
+• Видео‑практики из расшифровок лекций (поиск и выдача)
 
-**💡 Примеры запросов:**
-• "Дай мне прогноз на год"
-• "Расскажи про мою матрицу"
-• "Нужны практики для уверенности"
-• "Помоги с отношениями"
-• "Что мое предназначение?"""
+🎯 **Как это работает:**
+1. Введите имя (английскими буквами)
+2. Укажите дату рождения
+3. Задавайте вопросы — получайте персональные ответы
+
+💫 **Система Миланы Тарба** помогает раскрыть потенциал и найти гармонию.
+
+Начните с команды /start! 🌟"""
     
     await callback_query.message.edit_text(
-        help_text,
+        about_text,
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_main")]
             ]
         ),
-        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
+        parse_mode="Markdown"
     )
 
 
@@ -1044,6 +1161,7 @@ async def handle_back_to_main(callback_query: types.CallbackQuery) -> None:
         await callback_query.message.edit_text(
             WELCOME_MESSAGE,
             reply_markup=data_input_keyboard,
+            parse_mode="Markdown"
         )
 
 
@@ -1061,23 +1179,23 @@ async def handle_chat_mode(callback_query: types.CallbackQuery) -> None:
     if user_id in user_contexts:
         del user_contexts[user_id]
     
-    chat_mode_message = """💬 **ОБЕЗЛИЧЕННЫЙ РЕЖИМ АКТИВИРОВАН**
+    chat_mode_message = """💬 ОБЕЗЛИЧЕННЫЙ РЕЖИМ АКТИВИРОВАН
 
 Теперь я работаю как обычный чат с GPT, но с базой знаний по цифрологии Миланы Тарба.
 
-✨ **Что изменилось:**
+✨ Что изменилось:
 • Не требую ваши персональные данные
 • Не делаю персональные разборы
 • Отвечаю на общие вопросы о цифрологии
 • Помогаю с теорией и практиками
 
-💡 **Примеры вопросов:**
+💡 Примеры вопросов:
 • "Что такое Число Сознания?"
 • "Как рассчитать матрицу?"
 • "Какие практики для энергии 7?"
 • "Расскажи про совместимость в цифрологии"
 
-🔙 **Для возврата в персональный режим** нажмите /start"""
+🔙 Для возврата в персональный режим нажмите /start"""
     
     await callback_query.message.edit_text(
         chat_mode_message,
@@ -1096,16 +1214,31 @@ async def handle_clear_context_callback(callback_query: types.CallbackQuery) -> 
     if user_id in user_contexts:
         del user_contexts[user_id]
     
+    # Очищаем личные данные пользователя
+    if user_id in user_data:
+        del user_data[user_id]
+    
+    # Очищаем дополнительные данные
+    clear_additional_data(user_id)
+    
+    # Очищаем флаг обновления данных
+    if user_id in data_just_updated:
+        del data_just_updated[user_id]
+    
+    # Очищаем закрепленное сообщение
+    if user_id in pinned_messages:
+        del pinned_messages[user_id]
+    
     # Сбрасываем режим
     user_mode[user_id] = False
     
-    clear_message = """🗑️ КОНТЕКСТ ОЧИЩЕН
+    clear_message = """🗑️ ВСЕ ДАННЫЕ ОЧИЩЕНЫ
 
-История нашего диалога очищена. Бот "забыл" предыдущие сообщения.
+История диалога и личные данные очищены. Бот "забыл" все предыдущие сообщения и ваши данные.
 
-Твои личные данные (имя и дата рождения) сохранены.
+Теперь можете начать с чистого листа! 💫
 
-Можешь продолжать общение с чистого листа! 💫"""
+Нажмите /start для ввода новых данных."""
     
     await callback_query.message.edit_text(
         clear_message,
@@ -1117,26 +1250,29 @@ async def handle_clear_context_callback(callback_query: types.CallbackQuery) -> 
     )
 
 
-@router.callback_query(lambda c: c.data == "feedback")
-async def handle_feedback_callback(callback_query: types.CallbackQuery) -> None:
-    """Обработчик кнопки 'Обратная связь'."""
+@router.callback_query(lambda c: c.data == "support")
+async def handle_support_callback(callback_query: types.CallbackQuery) -> None:
+    """Обработчик кнопки 'Служба заботы'."""
     await callback_query.answer()
     
-    feedback_message = """💬 ОБРАТНАЯ СВЯЗЬ
+    support_message = """🆘 **СЛУЖБА ЗАБОТЫ**
 
-Если у тебя есть вопросы, предложения или замечания по работе бота, пиши напрямую разработчику:
+Если у вас есть вопросы, предложения или нужна помощь, 
+обращайтесь к нашей службе заботы!
 
-👨‍💻 @barefootdao
+📞 **Контакты для связи:**
+• Telegram: [Написать](https://t.me/zabota_TarbaMilanabot?start=start)
 
-Мы ценим твое мнение и постоянно улучшаем бота! 🙏"""
+Мы всегда готовы помочь и ответить на ваши вопросы! 💫"""
     
     await callback_query.message.edit_text(
-        feedback_message,
+        support_message,
         reply_markup=InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_main")]
             ]
-        )
+        ),
+        parse_mode="Markdown"
     )
 
 
@@ -1195,7 +1331,7 @@ async def handle_chat_mode_message(message: types.Message) -> None:
                 user_contexts[user_id] = user_contexts[user_id][-20:]
             
             # Отправляем ответ с Markdown форматированием
-            await message.answer(response)
+            await message.answer(response, parse_mode="Markdown")
     
     except Exception as e:
         # Отправляем индикатор печати
@@ -1234,47 +1370,66 @@ async def show_user_data_message(message: types.Message) -> None:
     # Проверяем наличие дополнительных данных
     additional_count = len(additional_data.get(user_id, []))
     
-    data_message = f"""✅ **Ваши данные сохранены!**
+    data_message = f"""✨ ДАННЫЕ СОХРАНЕНЫ!
 
-👤 **Имя:** {name}
-📅 **Дата рождения:** {birth_date}
+👤 Имя: {name}
+📅 Дата рождения: {birth_date}
 
-🔢 **ВАШИ ЧИСЛА:**
 • ЧС (Число Сознания): {analytics.get('chs', 'N/A')}
 • ЧД (Число Действия): {analytics.get('chd', 'N/A')}
 • ЧИ (Число Имени): {analytics.get('name_number', 'N/A')}
 
-📅 **ЛИЧНЫЕ ДАТЫ:**
 • Личный год: {analytics.get('personal_year', 'N/A')}
 • Личный месяц: {analytics.get('personal_month', 'N/A')}
 • Личный день: {analytics.get('personal_day', 'N/A')}
 
-⚡ **МАТРИЦА ЭНЕРГИЙ:**"""
+МАТРИЦА ЭНЕРГИЙ:"""
     
-    # Добавляем матрицу энергий
-    matrix_energies = analytics.get('matrix_energies', {})
-    if matrix_energies:
-        for energy, description in sorted(matrix_energies.items()):
-            data_message += f"\n• Энергия {energy}: {description}"
+    # Добавляем матрицу энергий в требуемом формате (только описания без количеств)
+    matrix_descriptions = {
+        1: "Принятие решений / психическая энергия / ответственность",
+        2: "Дипломатия / понимание / чувственность, детальность / исполнительность",
+        3: "Творчество / самовыражение / общительность",
+        4: "Стабильность / система / дисциплина",
+        5: "Свобода / движение / гибкость",
+        6: "Забота / гармония / ответственность за близких",
+        7: "Мудрость / внутренняя опора / интуиция",
+        8: "Труд / упорство / способность учиться на своих ошибках / чувство долга / ответственность",
+        9: "Завершение / гуманизм / масштаб мышления",
+    }
+    digit_counts = analytics.get('matrix_digit_counts', {}) or {}
+    for digit in range(1, 10):
+        count = digit_counts.get(digit, 0)
+        if count and digit in matrix_descriptions:
+            data_message += f"\n• Энергия {digit}: {matrix_descriptions[digit]}"
     
     if additional_count > 0:
-        data_message += f"\n\n📊 **Дополнительные данные для сравнения:** {additional_count} человек"
+        data_message += f"\n\n📊 Дополнительные данные для сравнения: {additional_count} человек"
     
     data_message += f"""
 
-**💬 Теперь просто пишите запросы:**
+
+💬 Теперь просто пишите запросы:
 • Дай мне прогноз на год
-• Расскажи про мою матрицу
+• Расскажи про мою матрицу  
 • Нужны практики для уверенности
 • Помоги с отношениями
 • Сравни меня с [Имя] [Дата] - для совместимости
 
-Я буду использовать ваши сохраненные данные для всех анализов!"""
+🤖 Команды бота (в меню):
+/menu - Показать главное меню
+/chat - Обезличенный режим
+/update - Обновить данные
+/clear - Очистить контекст
+/about - О боте
+/support - Служба заботы
+
+Я буду использовать ваши сохраненные данные для всех анализов! 💫"""
     
     sent_message = await message.answer(
         data_message,
-        reply_markup=data_management_keyboard,
-        # parse_mode="Markdown"  # Убрано для избежания ошибок парсинга
+        reply_markup=ReplyKeyboardRemove(),
+        parse_mode="Markdown"
     )
     
     # Сохраняем ID закрепленного сообщения
@@ -1315,33 +1470,62 @@ def is_additional_name_format(name: str) -> bool:
     return name.replace(' ', '').isalpha()
 
 
-def is_date_format(date_str: str) -> bool:
-    """Проверяет формат даты."""
+def normalize_date_format(date_str: str) -> str:
+    """Нормализует дату в стандартный формат dd.mm.yyyy."""
     if not date_str or not date_str.strip():
-        return False
+        raise ValueError("Дата не может быть пустой")
     
-    # Поддерживаемые форматы
+    date_str = date_str.strip()
+    
+    # Сначала пробуем стандартные форматы
+    from datetime import datetime
+    import re
+    
     date_formats = ["%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y", "%d %m %Y"]
     
     for fmt in date_formats:
         try:
-            from datetime import datetime
-            datetime.strptime(date_str.strip(), fmt)
-            return True
+            d = datetime.strptime(date_str, fmt)
+            return d.strftime("%d.%m.%Y")
         except ValueError:
             continue
     
-    return False
+    # Если стандартные форматы не сработали, пробуем формат с пробелами
+    if re.match(r'^\d{1,2}\s+\d{1,2}\s+\d{4}$', date_str):
+        # Заменяем пробелы на точки
+        normalized_date = re.sub(r'\s+', '.', date_str)
+        try:
+            d = datetime.strptime(normalized_date, "%d.%m.%Y")
+            return d.strftime("%d.%m.%Y")
+        except ValueError:
+            pass
+    
+    raise ValueError(f"Неподдерживаемый формат даты: {date_str}")
+
+
+def is_date_format(date_str: str) -> bool:
+    """Проверяет формат даты."""
+    try:
+        normalize_date_format(date_str)
+        return True
+    except ValueError:
+        return False
 
 
 def calculate_user_analytics(name: str, birth_date: str) -> dict:
     """Рассчитывает аналитику пользователя программно."""
     try:
+        print(f"🔍 DEBUG calculate_user_analytics: name='{name}', birth_date='{birth_date}'")
+        
         # Создаем сервис аналитики
         analytics_service = AnalyticsService()
+        print(f"🔍 DEBUG: AnalyticsService создан успешно")
         
         # Выполняем полный анализ
+        print(f"🔍 DEBUG: Вызываем analyze_person...")
         result = analytics_service.analyze_person(birth_date, name)
+        print(f"🔍 DEBUG: Результат analyze_person получен: {type(result)}")
+        print(f"🔍 DEBUG: Ключи результата: {list(result.keys())}")
         
         # Извлекаем данные из правильной структуры
         calculations = result.get('calculations', {})
@@ -1383,7 +1567,10 @@ def calculate_user_analytics(name: str, birth_date: str) -> dict:
             'matrix_missing_digits': matrix_data.get('missing_digits', [])
         }
     except Exception as e:
-        print(f"Ошибка расчета аналитики: {e}")
+        print(f"❌ Ошибка расчета аналитики: {e}")
+        print(f"❌ Тип ошибки: {type(e).__name__}")
+        import traceback
+        print(f"❌ Трейсбэк: {traceback.format_exc()}")
         return {
             'chs': None,
             'chd': None,
@@ -1397,3 +1584,35 @@ def calculate_user_analytics(name: str, birth_date: str) -> dict:
             'matrix_weak_digits': [],
             'matrix_missing_digits': []
         }
+
+async def handle_mode_message(message: types.Message, mode: Mode) -> None:
+    """Обработка сообщений в режимах marketing/sales без персональных данных."""
+    user_id = message.from_user.id
+    user_message = message.text.strip()
+    
+    # Добавляем в контекст с маркером режима
+    mode_prefixed = prefix_with_mode(user_message, mode)
+    user_contexts[user_id].append({
+        "role": "user",
+        "content": mode_prefixed
+    })
+    
+    try:
+        settings = Settings.from_env()
+        db_manager = get_db_manager()
+        async with db_manager.get_session() as session:
+            openai_service = OpenAIContextService(
+                api_key=settings.openai_api_key,
+                db_session=session
+            )
+            await send_typing_status(message)
+            status_msg = await send_status_message(message, "Обрабатываю ваш запрос...")
+            response = await send_with_assistant(message, user_message, mode, user_contexts[user_id])
+            try:
+                if status_msg:
+                    await status_msg.delete()
+            except Exception:
+                pass
+            await message.answer(response)
+    except Exception as e:
+        await message.answer(f"❌ Извините, произошла ошибка при обработке запроса: {str(e)}")

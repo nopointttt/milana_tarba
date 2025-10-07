@@ -52,8 +52,8 @@ async def show_help(message: types.Message) -> None:
     help_text = (
         "**📖 СПРАВКА ПО ИСПОЛЬЗОВАНИЮ БОТА**\n\n"
         "**📅 Формат даты рождения:**\n"
-        "• Обязательно: `dd.mm.yyyy`\n"
-        "• Примеры: `15.03.1990`, `01.01.2000`\n\n"
+        "• Обязательно: dd.mm.yyyy\n"
+"• Примеры: 15.03.1990, 01.01.2000\n\n"
         "**👤 Формат имени:**\n"
         "• Можно на кириллице: *Иван Петров*\n"
         "• Можно на латинице: *Ivan Petrov*\n"
@@ -94,7 +94,7 @@ def convert_markdown_to_html(text: str) -> str:
     for i, line in enumerate(lines):
         if line.startswith('<b>') and not line.endswith('</b>'):
             # Ищем конец строки или следующий заголовок
-            if i + 1 < len(lines) and (lines[i + 1].startswith('<b>') or lines[i + 1].startswith('---') or lines[i + 1].strip() == ''):
+            if i + 1 < len(lines) and (lines[i + 1].startswith('<b>') or lines[i + 1].strip() == ''):
                 lines[i] = line + '</b>'
             elif line.strip() and not line.endswith('</b>'):
                 lines[i] = line + '</b>'
@@ -112,9 +112,6 @@ def convert_markdown_to_html(text: str) -> str:
     # Исправляем двойные теги
     text = text.replace('<i><i>', '<i>')
     text = text.replace('</i></i>', '</i>')
-    
-    # Заменяем разделители
-    text = text.replace('---', '<i>─────────────────────────</i>')
     
     # Заменяем списки
     text = text.replace('• ', '• ')
@@ -196,8 +193,8 @@ async def process_user_input(message: types.Message) -> None:
     if 'birth_date' not in user_data[user_id]:
         await message.answer(
             "❌ **Неверный формат даты.**\n\n"
-            "Введите дату в формате `dd.mm.yyyy`\n"
-            "Например: `20.05.1997`",
+            "Введите дату в формате dd.mm.yyyy\n"
+"Например: 20.05.1997",
             parse_mode="Markdown"
         )
     elif 'name' not in user_data[user_id]:
@@ -330,14 +327,14 @@ def _format_analysis_report(analysis: dict) -> str:
             report += f"• **Латиницей:** *{input_data['latin_name']}*\n"
     else:
         report += f"• **Имя:** *Не указано (анализ только по дате рождения)*\n"
-    report += f"• **Дата рождения:** `{input_data['birth_date']}`\n\n"
+    report += f"• **Дата рождения:** {input_data['birth_date']}\n\n"
     
     # Ключевые числа
     report += f"**🔢 КЛЮЧЕВЫЕ ЧИСЛА**\n"
-    report += f"• **Число Сознания (ЧС):** `{calculations['consciousness_number']}`\n"
-    report += f"• **Число Действия (ЧД):** `{calculations['action_number']}`\n"
+    report += f"• **Число Сознания (ЧС):** {calculations['consciousness_number']}\n"
+    report += f"• **Число Действия (ЧД):** {calculations['action_number']}\n"
     if calculations['name_number'] is not None:
-        report += f"• **Число Имени:** `{calculations['name_number']}`\n"
+        report += f"• **Число Имени:** {calculations['name_number']}\n"
     else:
         report += f"• **Число Имени:** *Не рассчитано (имя не указано)*\n"
     report += "\n"
@@ -345,11 +342,11 @@ def _format_analysis_report(analysis: dict) -> str:
     # Матрица
     report += f"**📊 МАТРИЦА ЭНЕРГИЙ**\n"
     if matrix['strong_digits']:
-        report += f"• **Сильные энергии:** `{', '.join(map(str, matrix['strong_digits']))}` (100% и выше)\n"
+        report += f"• **Сильные энергии:** {', '.join(map(str, matrix['strong_digits']))} (100% и выше)\n"
     if matrix['weak_digits']:
-        report += f"• **Слабые энергии:** `{', '.join(map(str, matrix['weak_digits']))}` (50%)\n"
+        report += f"• **Слабые энергии:** {', '.join(map(str, matrix['weak_digits']))} (50%)\n"
     if matrix['missing_digits']:
-        report += f"• **Отсутствующие энергии:** `{', '.join(map(str, matrix['missing_digits']))}`\n"
+        report += f"• **Отсутствующие энергии:** {', '.join(map(str, matrix['missing_digits']))}\n"
     report += f"• **Анализ:** {matrix['analysis']}\n\n"
     
     # Интерпретации
@@ -367,7 +364,6 @@ def _format_analysis_report(analysis: dict) -> str:
         report += f"⚠️ **Особое внимание:** Обнаружен внутренний конфликт между ЧС и ЧД\n\n"
     
     # Дисклеймер
-    report += f"---\n"
     report += f"*Анализ выполнен на базе правил из «Книги Знаний по Цифрологии». "
     report += f"Результат — не приговор, а карта возможностей.*"
     

@@ -189,8 +189,8 @@ async def handle_full_analysis_query(message: types.Message, query: str) -> None
     
     await message.answer(
         "**📅 Шаг 2 из 3: Дата рождения**\n\n"
-        "Введите дату рождения в формате `dd.mm.yyyy`\n\n"
-        "*Например: `20.05.1997`*",
+        "Введите дату рождения в формате dd.mm.yyyy\n\n"
+"Например: 20.05.1997",
         parse_mode="Markdown"
     )
 
@@ -200,8 +200,8 @@ async def handle_full_analysis_date(message: types.Message, date_str: str) -> No
     if not analytics_service.validate_birth_date(date_str):
         await message.answer(
             "❌ **Неверный формат даты.**\n\n"
-            "Введите дату в формате `dd.mm.yyyy`\n"
-            "Например: `20.05.1997`",
+            "Введите дату в формате dd.mm.yyyy\n"
+"Например: 20.05.1997",
             parse_mode="Markdown"
         )
         return

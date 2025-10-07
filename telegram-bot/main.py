@@ -22,6 +22,7 @@ except Exception as e:  # noqa: BLE001
     logging.getLogger(__name__).warning("Could not load .env via python-dotenv: %s", e)
 
 from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
 
 from src.config import Settings
 from src.db.connection import initialize_database
@@ -45,6 +46,22 @@ def setup_sentry(dsn: Optional[str]) -> None:
             logging.getLogger(__name__).warning("Sentry init failed: %s", e)
 
 
+async def setup_bot_commands(bot: Bot) -> None:
+    """Устанавливаем команды бота в меню."""
+    commands = [
+        BotCommand(command="start", description="🏠 Начать работу с ботом"),
+        BotCommand(command="menu", description="Показать главное меню"),
+        BotCommand(command="chat", description="Обезличенный режим"),
+        BotCommand(command="marketing", description="Маркетинговый режим"),
+        BotCommand(command="sales", description="Режим продаж"),
+        BotCommand(command="update", description="Обновить данные"),
+        BotCommand(command="clear", description="Очистить контекст"),
+        BotCommand(command="about", description="О боте"),
+        BotCommand(command="support", description="Служба заботы"),
+    ]
+    await bot.set_my_commands(commands)
+
+
 async def polling_app() -> None:
     settings = Settings.from_env()
     setup_logging()
@@ -56,6 +73,9 @@ async def polling_app() -> None:
 
     bot = Bot(settings.telegram_bot_token)
     dp = Dispatcher()
+
+    # Устанавливаем команды бота
+    await setup_bot_commands(bot)
 
     # Routers
     dp.include_router(context_handler.router)
