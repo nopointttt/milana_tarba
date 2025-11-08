@@ -26,6 +26,8 @@ class KnowledgeBaseRAGService:
         self.knowledge_base_path = current_dir / "media" / "Книга Знаний.txt"
         # Optional directory with extra text knowledge sources (user-ingested)
         self.extra_knowledge_dir = current_dir / "media" / "extra_knowledge"
+        # New structured knowledge base directory
+        self.knowledge_base_dir = current_dir / "media" / "knowledge_base"
         self.practices_path = current_dir / "practices-data"
         self.csv_practices_path = current_dir / "media" / "ИНСТИТУТ Задания 2  - Лист1.csv"
         self.knowledge_content = None
@@ -35,6 +37,7 @@ class KnowledgeBaseRAGService:
         self.video_practices_service = VideoPracticesService()
         self._load_knowledge_base()
         self._load_extra_knowledge()
+        self._load_knowledge_base_files()
         self._load_practices()
         self._load_csv_practices()
     
@@ -82,6 +85,35 @@ class KnowledgeBaseRAGService:
                 logger.debug(f"Extra knowledge directory not found: {self.extra_knowledge_dir}")
         except Exception as e:
             logger.error(f"Error loading extra knowledge: {e}")
+    
+    def _load_knowledge_base_files(self) -> None:
+        """Load structured knowledge base files from knowledge_base directory if present."""
+        try:
+            if self.knowledge_base_dir.exists() and self.knowledge_base_dir.is_dir():
+                for txt_file in sorted(self.knowledge_base_dir.glob("*.txt")):
+                    try:
+                        with open(txt_file, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        title = txt_file.stem
+                        # Split into sections using existing logic for better matching
+                        sections = self._split_into_sections(content)
+                        # Attach source metadata and fallback to single section if needed
+                        if not sections:
+                            sections = [{"title": title, "content": content}]
+                        for section in sections:
+                            self.extra_knowledge_sections.append({
+                                "title": section.get("title") or title,
+                                "content": section.get("content", ""),
+                                "source": "knowledge_base",
+                                "filename": txt_file.name
+                            })
+                    except Exception as inner_e:
+                        logger.warning(f"Failed to load knowledge base file {txt_file}: {inner_e}")
+                logger.info(f"Loaded knowledge base files from {self.knowledge_base_dir}")
+            else:
+                logger.debug(f"Knowledge base directory not found: {self.knowledge_base_dir}")
+        except Exception as e:
+            logger.error(f"Error loading knowledge base files: {e}")
     
     def _load_practices(self) -> None:
         """Load all practices from JSON files."""
